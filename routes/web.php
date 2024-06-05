@@ -22,15 +22,11 @@ Route::get('/dashboard', function () {
 
 Route::get('/users', function () {
     return Inertia::render('Users/Index');
-})->middleware(['auth', 'verified'])->name('users.index');
+})->name('users.index');
 
 Route::get('/users/create', function () {
     return Inertia::render('Users/Create');
-})->middleware(['auth', 'verified'])->name('users.create');
-
-Route::get('/users/{user}/edit', function ($user) {
-    return Inertia::render('Users/Edit', ['user' => $user]);
-})->middleware(['auth', 'verified'])->name('users.edit');
+})->name('users.create');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,8 +36,6 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/backoffice', [BackofficeController::class, 'index'])->name('backoffice');
 
-// Rutas para la gestión de usuarios
-Route::get('/users', [UserController::class, 'index'])->name('users.index');
 Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
 Route::post('/users', [UserController::class, 'store'])->name('users.store');
 Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');

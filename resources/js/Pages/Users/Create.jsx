@@ -1,8 +1,10 @@
 import React from 'react';
-import { useForm } from '@inertiajs/react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, useForm, Link, usePage } from '@inertiajs/react';
 import './create.css';
 
 export default function Create() {
+    const { auth } = usePage().props;
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
@@ -16,46 +18,61 @@ export default function Create() {
     };
 
     return (
-        <div className="form-container">
-            <h1>Create User</h1>
-            <form onSubmit={submit}>
-                <div>
-                    <label>Name</label>
-                    <input
-                        type="text"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                    />
-                    {errors.name && <div className="error">{errors.name}</div>}
+        <AuthenticatedLayout
+            user={auth.user}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Crear Usuario</h2>}
+        >
+            <Head title="Crear Usuario" />
+            <div className="py-12">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="p-6 bg-white border-b border-gray-200">
+                            <div className="form-container">
+                                <h1>Crear Usuario</h1>
+                                <form onSubmit={submit}>
+                                    <div>
+                                        <label>Nombre</label>
+                                        <input
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                        />
+                                        {errors.name && <div className="error">{errors.name}</div>}
+                                    </div>
+                                    <div>
+                                        <label>Correo</label>
+                                        <input
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                        />
+                                        {errors.email && <div className="error">{errors.email}</div>}
+                                    </div>
+                                    <div>
+                                        <label>Contraseña</label>
+                                        <input
+                                            type="password"
+                                            value={data.password}
+                                            onChange={(e) => setData('password', e.target.value)}
+                                        />
+                                        {errors.password && <div className="error">{errors.password}</div>}
+                                    </div>
+                                    <div>
+                                        <label>Confirmar Contraseña</label>
+                                        <input
+                                            type="password"
+                                            value={data.password_confirmation}
+                                            onChange={(e) => setData('password_confirmation', e.target.value)}
+                                        />
+                                    </div>
+                                    <button type="submit" disabled={processing}>Crear</button>
+                                </form>
+                                <Link href={route('users.index')} className="text-blue-500 mt-4">Volver a Usuarios</Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-                    {errors.email && <div className="error">{errors.email}</div>}
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-                    {errors.password && <div className="error">{errors.password}</div>}
-                </div>
-                <div>
-                    <label>Confirm Password</label>
-                    <input
-                        type="password"
-                        value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                    />
-                </div>
-                <button type="submit" disabled={processing}>Create</button>
-            </form>
-        </div>
+            </div>
+        </AuthenticatedLayout>
     );
 }
