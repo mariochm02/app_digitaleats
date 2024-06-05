@@ -25,7 +25,7 @@ export default function Authenticated({ user, header, children }) {
                                     Dashboard
                                 </NavLink>
                                 <NavLink href={route('backoffice')} active={route().current('backoffice')}>
-                                    Backoffice
+                                    Empleados
                                 </NavLink>
                             </div>
                         </div>
@@ -99,7 +99,7 @@ export default function Authenticated({ user, header, children }) {
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('backoffice')} active={route().current('backoffice')}>
-                            Backoffice
+                            Empleados
                         </ResponsiveNavLink>
                     </div>
 
