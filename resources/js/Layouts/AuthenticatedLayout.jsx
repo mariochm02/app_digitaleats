@@ -24,7 +24,7 @@ export default function Authenticated({ user, header, children }) {
                                 <NavLink href={route('dashboard')} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink>
-                                <NavLink href="/users" active={route().current('users.index')}>
+                                <NavLink href={route('users.index')} active={route().current('users.index')}>
                                     Empleados
                                 </NavLink>
                             </div>
@@ -49,7 +49,7 @@ export default function Authenticated({ user, header, children }) {
                                                 >
                                                     <path
                                                         fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 010-1.414z"
                                                         clipRule="evenodd"
                                                     />
                                                 </svg>
@@ -98,7 +98,7 @@ export default function Authenticated({ user, header, children }) {
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href="/users" active={route().current('users.index')}>
+                        <ResponsiveNavLink href={route('users.index')} active={route().current('users.index')}>
                             Empleados
                         </ResponsiveNavLink>
                     </div>
