@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 
-export default function TPV({ order, tpvItems, orderDetails = [] }) {
+export default function TPV({ order, categories, orderDetails }) {
     const { auth } = usePage().props;
 
     const { data, setData, post, processing, errors } = useForm({
@@ -12,11 +12,16 @@ export default function TPV({ order, tpvItems, orderDetails = [] }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('orders.addItem', order.id));
+        console.log("Submitting item_id:", data.item_id);
+        post(route('orders.addItem', order.id), {
+            onSuccess: () => {
+                console.log('Item added successfully');
+            },
+            onError: (error) => {
+                console.log('Error adding item:', error);
+            }
+        });
     };
-
-    // Asegúrate de que orderDetails es un arreglo
-    const safeOrderDetails = Array.isArray(orderDetails) ? orderDetails : [];
 
     return (
         <AuthenticatedLayout
@@ -34,8 +39,12 @@ export default function TPV({ order, tpvItems, orderDetails = [] }) {
                                     <label>Artículo</label>
                                     <select value={data.item_id} onChange={(e) => setData('item_id', e.target.value)}>
                                         <option value="">Seleccione un artículo</option>
-                                        {tpvItems.map(item => (
-                                            <option key={item.id} value={item.id}>{item.name} - ${item.price}</option>
+                                        {categories.map(category => (
+                                            category.subcategories.map(subcategory => (
+                                                subcategory.items.map(item => (
+                                                    <option key={item.id} value={item.id}>{item.name} - ${item.price}</option>
+                                                ))
+                                            ))
                                         ))}
                                     </select>
                                     {errors.item_id && <div className="error">{errors.item_id}</div>}
@@ -57,23 +66,17 @@ export default function TPV({ order, tpvItems, orderDetails = [] }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {safeOrderDetails.length > 0 ? (
-                                        safeOrderDetails.map(detail => (
-                                            <tr key={detail.id}>
-                                                <td className="border px-4 py-2">{detail.item}</td>
-                                                <td className="border px-4 py-2">{detail.quantity}</td>
-                                                <td className="border px-4 py-2">${detail.price}</td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td colSpan="3" className="text-center">No hay detalles del pedido.</td>
+                                    {orderDetails.map(detail => (
+                                        <tr key={detail.id}>
+                                            <td className="border px-4 py-2">{detail.item}</td>
+                                            <td className="border px-4 py-2">{detail.quantity}</td>
+                                            <td className="border px-4 py-2">${detail.price}</td>
                                         </tr>
-                                    )}
+                                    ))}
                                 </tbody>
                             </table>
                             <div className="mt-4">
-                                <strong>Total: ${safeOrderDetails.reduce((total, detail) => total + detail.price, 0)}</strong>
+                                <strong>Total: ${orderDetails.reduce((total, detail) => total + detail.price, 0)}</strong>
                             </div>
                         </div>
                     </div>

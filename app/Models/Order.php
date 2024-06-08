@@ -9,10 +9,12 @@ class Order extends Model
 {
     use HasFactory;
 
-    // Aquí puedes definir los atributos que se pueden asignar masivamente
-    protected $fillable = [
-        'table_number',
-        'number_of_people',
-    ];
+    protected $fillable = ['table_number', 'number_of_people'];
+
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
+
 

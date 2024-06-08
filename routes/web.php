@@ -47,11 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
-    Route::delete('/delete-order/{id}', [OrderController::class, 'deleteOrder'])->name('orders.delete');
+    Route::delete('/delete-order/{id}', [OrderController::class, 'deleteOrder'])->name('orders.destroy');
+	Route::get('/orders/{order}/tpv', [OrderController::class, 'tpv'])->name('orders.tpv');
+	Route::post('/orders/{order}/add-item', [OrderController::class, 'addItem'])->name('orders.addItem');
 });
 
-Route::get('/orders/{order}/tpv', [OrderController::class, 'tpv'])->name('orders.tpv');
-Route::post('/orders/{order}/tpv', [OrderController::class, 'addItem'])->name('orders.addItem');
+
 
 
 
