@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 
-export default function TPV({ order, tpvItems, orderDetails }) {
+export default function TPV({ order, tpvItems, orderDetails = [] }) {
+    const { auth } = usePage().props;
+
     const { data, setData, post, processing, errors } = useForm({
         item_id: '',
         quantity: 1,
@@ -12,6 +14,9 @@ export default function TPV({ order, tpvItems, orderDetails }) {
         e.preventDefault();
         post(route('orders.addItem', order.id));
     };
+
+    // Asegúrate de que orderDetails es un arreglo
+    const safeOrderDetails = Array.isArray(orderDetails) ? orderDetails : [];
 
     return (
         <AuthenticatedLayout
@@ -52,17 +57,23 @@ export default function TPV({ order, tpvItems, orderDetails }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orderDetails.map(detail => (
-                                        <tr key={detail.id}>
-                                            <td className="border px-4 py-2">{detail.item}</td>
-                                            <td className="border px-4 py-2">{detail.quantity}</td>
-                                            <td className="border px-4 py-2">${detail.price}</td>
+                                    {safeOrderDetails.length > 0 ? (
+                                        safeOrderDetails.map(detail => (
+                                            <tr key={detail.id}>
+                                                <td className="border px-4 py-2">{detail.item}</td>
+                                                <td className="border px-4 py-2">{detail.quantity}</td>
+                                                <td className="border px-4 py-2">${detail.price}</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="3" className="text-center">No hay detalles del pedido.</td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                             <div className="mt-4">
-                                <strong>Total: ${orderDetails.reduce((total, detail) => total + detail.price, 0)}</strong>
+                                <strong>Total: ${safeOrderDetails.reduce((total, detail) => total + detail.price, 0)}</strong>
                             </div>
                         </div>
                     </div>

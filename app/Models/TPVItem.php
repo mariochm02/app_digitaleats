@@ -9,6 +9,7 @@ class TPVItem extends Model
 {
     use HasFactory;
 
+        protected $table = 'tpv_items';
     protected $fillable = ['name', 'price'];
 }
 
