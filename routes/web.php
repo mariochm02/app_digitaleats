@@ -50,5 +50,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-order/{id}', [OrderController::class, 'deleteOrder'])->name('orders.delete');
 });
 
+Route::get('/orders/{order}/tpv', [OrderController::class, 'tpv'])->name('orders.tpv');
+Route::post('/orders/{order}/tpv', [OrderController::class, 'addItem'])->name('orders.addItem');
+
+
 
 require __DIR__.'/auth.php';

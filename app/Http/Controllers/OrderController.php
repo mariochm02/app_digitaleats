@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\OrderDetail;
+use App\Models\TPVItem;
 
 class OrderController extends Controller
 {
@@ -58,4 +60,34 @@ public function deleteOrder($id)
         return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
 }
+
+public function tpv(Order $order)
+{
+    $tpvItems = TPVItem::all();
+    $orderDetails = $order->orderDetails;
+    return Inertia::render('Orders/TPV', [
+        'order' => $order,
+        'tpvItems' => $tpvItems,
+        'orderDetails' => $orderDetails,
+    ]);
+}
+
+public function addItem(Request $request, Order $order)
+{
+    $request->validate([
+        'item_id' => 'required|exists:tpv_items,id',
+        'quantity' => 'required|integer|min=1',
+    ]);
+
+    $tpvItem = TPVItem::find($request->item_id);
+    OrderDetail::create([
+        'order_id' => $order->id,
+        'item' => $tpvItem->name,
+        'quantity' => $request->quantity,
+        'price' => $tpvItem->price * $request->quantity,
+    ]);
+
+    return redirect()->route('orders.tpv', $order);
+}
+
 }

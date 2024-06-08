@@ -5,16 +5,17 @@ import { Head, Link, usePage } from '@inertiajs/react';
 export default function Index({ orders, flash }) {
     const { auth } = usePage().props;
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        const id = e.target.getAttribute('data-id');
         if (confirm("¿Estás seguro de que quieres eliminar este pedido?")) {
             try {
-                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                const response = await fetch(`/delete-order/${id}`, {
+                const response = await fetch(route('orders.destroy', id), {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': token
-                    }
+                        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
                 });
                 if (response.ok) {
                     window.location.reload();
@@ -57,7 +58,8 @@ export default function Index({ orders, flash }) {
                                             <td className="border px-4 py-2">{order.number_of_people}</td>
                                             <td className="border px-4 py-2">
                                                 <Link href={route("orders.edit", order.id)} className="text-blue-500 mr-2">Editar</Link>
-                                                <button onClick={() => handleDelete(order.id)} className="text-red-500">Eliminar</button>
+                                                <button onClick={handleDelete} data-id={order.id} className="text-red-500">Eliminar</button>
+                                                <Link href={route("orders.tpv", order.id)} className="text-green-500 ml-2">TPV</Link>
                                             </td>
                                         </tr>
                                     ))}
