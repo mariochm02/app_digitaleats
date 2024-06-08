@@ -41,14 +41,14 @@ Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.e
 Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
 Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-// Prefijo para las rutas de pedidos
-// Rutas para la gestión de pedidos
-Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
-Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
-Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+Route::middleware('auth')->group(function () {
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
+    Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('/delete-order/{id}', [OrderController::class, 'deleteOrder'])->name('orders.delete');
+});
 
 
 require __DIR__.'/auth.php';

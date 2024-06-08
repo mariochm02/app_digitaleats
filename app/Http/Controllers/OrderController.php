@@ -21,12 +21,12 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'table_number' => 'required|integer',
             'number_of_people' => 'required|integer',
         ]);
 
-        Order::create($request->all());
+        Order::create($validatedData);
 
         return redirect()->route('orders.index')->with('success', 'Pedido creado exitosamente.');
     }
@@ -38,20 +38,24 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'table_number' => 'required|integer',
             'number_of_people' => 'required|integer',
         ]);
 
-        $order->update($request->all());
+        $order->update($validatedData);
 
         return redirect()->route('orders.index')->with('success', 'Pedido actualizado exitosamente.');
     }
 
-    public function destroy(Order $order)
-    {
+public function deleteOrder($id)
+{
+    try {
+        $order = Order::findOrFail($id);
         $order->delete();
-
-        return redirect()->route('orders.index')->with('success', 'Pedido eliminado exitosamente.');
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
+}
 }

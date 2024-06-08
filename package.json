@@ -9,7 +9,7 @@
         "@babel/core": "^7.24.6",
         "@babel/preset-react": "^7.24.6",
         "@headlessui/react": "^1.4.2",
-        "@inertiajs/react": "^1.0.0",
+        "@inertiajs/react": "^1.1.0",
         "@tailwindcss/forms": "^0.5.3",
         "@vitejs/plugin-react": "^4.2.0",
         "autoprefixer": "^10.4.12",

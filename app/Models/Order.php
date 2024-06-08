@@ -12,7 +12,7 @@ class Order extends Model
     // Aquí puedes definir los atributos que se pueden asignar masivamente
     protected $fillable = [
         'table_number',
-        'people_count',
+        'number_of_people',
     ];
 }
 

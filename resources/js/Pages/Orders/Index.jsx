@@ -5,9 +5,25 @@ import { Head, Link, usePage } from '@inertiajs/react';
 export default function Index({ orders, flash }) {
     const { auth } = usePage().props;
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (confirm("¿Estás seguro de que quieres eliminar este pedido?")) {
-            Inertia.delete(route("orders.destroy", id));
+            try {
+                const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const response = await fetch(`/delete-order/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    }
+                });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Error al eliminar el pedido');
+                }
+            } catch (error) {
+                console.error('Error al eliminar el pedido:', error);
+            }
         }
     };
 
