@@ -1,0 +1,24 @@
+.btn-category, .btn-subcategory, .btn-submit {
+    padding: 15px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+    color: #fff;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    margin: 5px;
+    display: inline-block;
+}
+
+.btn-category:hover, .btn-subcategory:hover, .btn-submit:hover {
+    background-color: #3e8e41;
+}
+
+.btn-category:active, .btn-subcategory:active, .btn-submit:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
