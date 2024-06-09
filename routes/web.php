@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use App\Http\Controllers\BackofficeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\KitchenController;
+use App\Http\Controllers\TestBroadcastController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -50,6 +52,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-order/{id}', [OrderController::class, 'deleteOrder'])->name('orders.destroy');
 	Route::get('/orders/{order}/tpv', [OrderController::class, 'tpv'])->name('orders.tpv');
 	Route::post('/orders/{order}/add-item', [OrderController::class, 'addItem'])->name('orders.addItem');
+	Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
+	Route::post('/kitchen/update-status', [KitchenController::class, 'updateStatus'])->name('kitchen.updateStatus');
+	Route::get('/send-test-event', [TestBroadcastController::class, 'sendTestEvent']);
+	Route::get('/kitchen-orders', [OrderController::class, 'getKitchenOrders']);
 });
 
 

@@ -1,9 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
+import Pusher from 'pusher-js';
+import Echo from 'laravel-echo';
 
 export default function Index({ orders, flash }) {
     const { auth } = usePage().props;
+
+    useEffect(() => {
+        // Claves de Pusher directamente en el código (sólo para pruebas/desarrollo)
+        const pusherKey = '7cfe1320d155f302b914';
+        const pusherCluster = 'eu';
+
+        console.log('Pusher Key:', pusherKey);
+        console.log('Pusher Cluster:', pusherCluster);
+
+        if (pusherKey && pusherCluster) {
+            window.Pusher = Pusher;
+
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: pusherKey,
+                cluster: pusherCluster,
+                encrypted: true,
+                forceTLS: true
+            });
+
+            window.Echo.channel('orders')
+                .listen('OrderStatusChanged', (data) => {
+                    console.log('Order Status Changed:', data);
+                    // Aquí puedes manejar la actualización de los pedidos
+                    alert(`Order ${data.order.id} status changed to ${data.status}`);
+                });
+        }
+    }, []);
 
     const handleDelete = async (e) => {
         e.preventDefault();

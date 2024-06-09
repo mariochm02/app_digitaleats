@@ -14,6 +14,7 @@ class CreateOrderDetailsTable extends Migration
             $table->string('item');
             $table->integer('quantity');
             $table->decimal('price', 8, 2);
+			$table->string('status')->default('pending');
             $table->timestamps();
         });
     }

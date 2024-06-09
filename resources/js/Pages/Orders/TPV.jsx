@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 import './tpv.css'; // Asegúrate de que el archivo CSS esté importado
 
 export default function TPV({ order, categories, orderDetails }) {
@@ -8,11 +10,44 @@ export default function TPV({ order, categories, orderDetails }) {
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
+    const [kitchenOrders, setKitchenOrders] = useState([]);
 
     const { data, setData, post, processing, errors } = useForm({
         item_id: '',
         quantity: 1,
     });
+
+    useEffect(() => {
+        const pusherKey = '7cfe1320d155f302b914';
+        const pusherCluster = 'eu';
+
+        console.log('Pusher Key:', pusherKey);
+        console.log('Pusher Cluster:', pusherCluster);
+
+        if (pusherKey && pusherCluster) {
+            window.Pusher = Pusher;
+
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: pusherKey,
+                cluster: pusherCluster,
+                encrypted: true,
+                forceTLS: true
+            });
+
+            window.Echo.channel('orders')
+                .listen('OrderStatusUpdated', (data) => {
+                    console.log('Order Status Updated:', data);
+                    setKitchenOrders(prevOrders => [...prevOrders, data.status]);
+                });
+
+            // Emitir evento de prueba al cargar la página TPV
+            fetch('/send-test-event')
+                .then(response => response.json())
+                .then(data => console.log('Test event response:', data))
+                .catch(error => console.error('Error triggering test event:', error));
+        }
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -111,6 +146,14 @@ export default function TPV({ order, categories, orderDetails }) {
                             <div className="mt-4">
                                 <strong>Total: ${orderDetails.reduce((total, detail) => total + parseFloat(detail.price), 0).toFixed(2)}</strong>
                             </div>
+                            <h2 className="mt-4">Notificaciones de Cocina</h2>
+                            <ul>
+                                {kitchenOrders.map(order => (
+                                    <li key={order.id}>
+                                        Pedido #{order.order_id} - Artículo: {order.order_detail.item} - Estado: {order.status}
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                 </div>

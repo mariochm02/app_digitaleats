@@ -9,12 +9,14 @@ use App\Models\OrderDetail;
 use App\Models\Item;
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Models\KitchenOrderStatus;
+use App\Events\OrderStatusUpdated;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::with('orderDetails.kitchenOrderStatus')->get();
         return Inertia::render('Orders/Index', ['orders' => $orders]);
     }
 
@@ -84,17 +86,55 @@ class OrderController extends Controller
         $item = Item::find($request->item_id);
         if ($item) {
             \Log::info('Adding item:', ['order_id' => $order->id, 'item_name' => $item->name, 'quantity' => $request->quantity, 'price' => $item->price * $request->quantity]);
-            OrderDetail::create([
+            $orderDetail = OrderDetail::create([
                 'order_id' => $order->id,
                 'item' => $item->name,
                 'quantity' => $request->quantity,
                 'price' => $item->price * $request->quantity,
             ]);
+
+            if ($item->subcategory->category->name === 'Comidas') {
+                \Log::info('Creating kitchen order status', [
+                    'order_id' => $order->id,
+                    'order_detail_id' => $orderDetail->id,
+                    'status' => 'pending',
+                ]);
+
+                $kitchenOrderStatus = KitchenOrderStatus::create([
+                    'order_id' => $order->id,
+                    'order_detail_id' => $orderDetail->id,
+                    'status' => 'pending',
+                ]);
+
+                \Log::info('Emitting OrderStatusUpdated event with data:', [
+                    'order_id' => $kitchenOrderStatus->order_id,
+                    'order_detail_id' => $kitchenOrderStatus->order_detail_id,
+                    'status' => $kitchenOrderStatus->status,
+                ]);
+                event(new OrderStatusUpdated($kitchenOrderStatus));
+            }
+
+            return redirect()->route('orders.tpv', $order);
         } else {
             \Log::error('Item not found:', ['item_id' => $request->item_id]);
             return redirect()->route('orders.tpv', $order)->withErrors(['item_id' => 'Item not found']);
         }
+    }
 
-        return redirect()->route('orders.tpv', $order);
+    public function updateOrderStatus(Request $request, Order $order)
+    {
+        $order->status = $request->status;
+        $order->save();
+
+        \Log::info('Broadcasting OrderStatusUpdated event for order:', ['order_id' => $order->id, 'status' => $order->status]);
+        broadcast(new OrderStatusUpdated($order))->toOthers();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function getKitchenOrders()
+    {
+        $orders = KitchenOrderStatus::with('orderDetail')->where('status', 'pending')->get();
+        return response()->json($orders);
     }
 }
