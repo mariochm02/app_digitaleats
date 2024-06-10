@@ -137,4 +137,14 @@ class OrderController extends Controller
         $orders = KitchenOrderStatus::with('orderDetail')->where('status', 'pending')->get();
         return response()->json($orders);
     }
+	public function updateReservation(Request $request, Order $order)
+{
+    $validatedData = $request->validate([
+        'is_reserved' => 'required|boolean',
+    ]);
+
+    $order->update($validatedData);
+
+    return response()->json(['success' => true, 'order' => $order]);
+}
 }

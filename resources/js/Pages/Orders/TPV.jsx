@@ -129,11 +129,7 @@ export default function TPV({ order, categories, orderDetails }) {
                                     </select>
                                     {errors.item_id && <div className="error">{errors.item_id}</div>}
                                 </div>
-                                <div className="form-group flex justify-end">
-                                    <label className='p-4'>Cantidad</label>
-                                    <input className='text-black' type="number" value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} />
-                                    {errors.quantity && <div className="error">{errors.quantity}</div>}
-                                </div>
+                            
                                 <div className='col-span-2 flex justify-center'>
                                 <button type="submit" className="btn-submit " disabled={processing}>Añadir</button>
                                 </div>
