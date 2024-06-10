@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import Pusher from 'pusher-js';
 import Echo from 'laravel-echo';
+import './index.css';
+
 
 export default function Index({ orders, flash }) {
     const { auth } = usePage().props;
@@ -61,19 +63,19 @@ export default function Index({ orders, flash }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Pedidos</h2>}
+            header={<h2 className="font-semibold text-xl text-white leading-tight">Pedidos</h2>}
         >
             <Head title="Pedidos" />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                            <h1>Pedidos</h1>
+            <div className="py-12  " >
+                <div className="bg-transparent max-w-7xl  mx-auto sm:px-6 lg:px-8">
+                    <div className="neo overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="p-6">
+                            <h1 className='text-white'>Pedidos</h1>
                             {flash && flash.success && (
                                 <div>{flash.success}</div>
                             )}
-                            <Link href={route("orders.create")} className="text-blue-500">Crear Nuevo Pedido</Link>
-                            <table className="table-auto w-full mt-4">
+                            <Link href={route("orders.create")} className="text-purple-500">Crear Nuevo Pedido</Link>
+                            <table className="table-auto text-white w-full mt-4">
                                 <thead>
                                     <tr>
                                         <th className="px-4 py-2">Número de Mesa</th>

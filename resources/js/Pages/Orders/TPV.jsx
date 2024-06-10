@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, usePage } from '@inertiajs/react';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import './tpv.css'; // Asegúrate de que el archivo CSS esté importado
+import './tpv.css'; // Asegúrarse de que el archivo CSS esté importado
 
 export default function TPV({ order, categories, orderDetails }) {
     const { auth } = usePage().props;
@@ -79,22 +79,30 @@ export default function TPV({ order, categories, orderDetails }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">TPV - Pedido #{order.id}</h2>}
+            header={<h2 className="font-semibold text-xl text-white leading-tight">TPV - Pedido #{order.id}</h2>}
         >
-            <Head title={`TPV - Pedido #${order.id}`} />
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                            <h1>TPV</h1>
-                            <div className="mb-4">
+            <Head  title={`TPV - Pedido #${order.id}`} />
+            <div className="py-12  bg-transparent">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-transparent">
+                    <div className="bg-transparent neo overflow-hidden shadow-sm sm:rounded-lg ">
+                        <div className="p-6 neo text-white grid">
+                            <h1 className='text-center text-white text-4xl	' >TPV</h1>
+                            <div className="mb-4 flex justify-center	">
+                                <div className='justify-center	'>
                                 <button onClick={() => setSelectedCategory('Bebidas')} className="btn-category mr-2">Bebidas</button>
+                                </div>
+                                <div>
                                 <button onClick={() => setSelectedCategory('Comidas')} className="btn-category mr-2">Comidas</button>
+                                </div>
+                                <div>
                                 <button onClick={() => setSelectedCategory('')} className="btn-category mr-2">Todos</button>
+                                </div>
                             </div>
                             {selectedCategory && (
-                                <div className="mb-4">
+                                <div className="mb-4 flex justify-center	">
                                     {filteredCategories.flatMap(category => category.subcategories).map(subcategory => (
+                                        <div>
+
                                         <button
                                             key={subcategory.id}
                                             onClick={() => setSelectedSubcategory(subcategory.name)}
@@ -102,14 +110,18 @@ export default function TPV({ order, categories, orderDetails }) {
                                         >
                                             {subcategory.name}
                                         </button>
+                                        </div>
                                     ))}
+                                    <div>
+
                                     <button onClick={() => setSelectedSubcategory('')} className="btn-subcategory mr-2">Todas</button>
+                                    </div>
                                 </div>
                             )}
-                            <form onSubmit={handleSubmit}>
-                                <div className="form-group">
-                                    <label>Artículo</label>
-                                    <select value={data.item_id} onChange={(e) => setData('item_id', e.target.value)}>
+                            <form className='grid grid-cols-2 justify-center mt-15' onSubmit={handleSubmit}>
+                                <div className="form-group flex justify-start">
+                                    <label className='p-5 '>Artículo</label>
+                                    <select className='text-black' value={data.item_id} onChange={(e) => setData('item_id', e.target.value)}>
                                         <option value="">Seleccione un artículo</option>
                                         {filteredItems.map(item => (
                                             <option key={item.id} value={item.id}>{item.name} - ${item.price}</option>
@@ -117,15 +129,17 @@ export default function TPV({ order, categories, orderDetails }) {
                                     </select>
                                     {errors.item_id && <div className="error">{errors.item_id}</div>}
                                 </div>
-                                <div className="form-group">
-                                    <label>Cantidad</label>
-                                    <input type="number" value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} />
+                                <div className="form-group flex justify-end">
+                                    <label className='p-4'>Cantidad</label>
+                                    <input className='text-black' type="number" value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} />
                                     {errors.quantity && <div className="error">{errors.quantity}</div>}
                                 </div>
-                                <button type="submit" className="btn-submit" disabled={processing}>Añadir</button>
+                                <div className='col-span-2 flex justify-center'>
+                                <button type="submit" className="btn-submit " disabled={processing}>Añadir</button>
+                                </div>
                             </form>
                             <h2 className="mt-4">Detalles del Pedido</h2>
-                            <table className="table-auto w-full mt-4">
+                            <table className="table-auto w-full mt-4 border border-color-white">
                                 <thead>
                                     <tr>
                                         <th className="px-4 py-2">Artículo</th>

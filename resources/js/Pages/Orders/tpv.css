@@ -5,20 +5,32 @@
     text-align: center;
     outline: none;
     color: #fff;
-    background-color: #4caf50;
+    background-color: rgb(107 33 168);;
     border: none;
     border-radius: 15px;
-    box-shadow: 0 9px #999;
+    box-shadow: 0 3px #fbbf24;
     margin: 5px;
     display: inline-block;
 }
 
 .btn-category:hover, .btn-subcategory:hover, .btn-submit:hover {
-    background-color: #3e8e41;
+    background-color: #fbbf24;
+    color: black;
 }
 
 .btn-category:active, .btn-subcategory:active, .btn-submit:active {
-    background-color: #3e8e41;
+    background-color: #fbbf24;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
+}
+
+
+
+.neo{
+    background: rgba(22, 22, 22, 0.35);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 16px );
+    -webkit-backdrop-filter: blur( 16px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
