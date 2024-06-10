@@ -15,14 +15,12 @@ class KitchenController extends Controller
         return Inertia::render('Kitchen/Index', ['orders' => $orders]);
     }
 
-    public function updateStatus(Request $request)
+public function updateStatus($id)
     {
-        $status = KitchenOrderStatus::find($request->id);
-        $status->status = $request->status;
-        $status->save();
+        $orderStatus = KitchenOrderStatus::findOrFail($id);
+        $orderStatus->status = 'completed';
+        $orderStatus->save();
 
-        broadcast(new OrderStatusUpdated($status));
-
-        return response()->json(['success' => true]);
+        return response()->json(['message' => 'Order status updated successfully.']);
     }
 }

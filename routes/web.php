@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
 	Route::post('/kitchen/update-status', [KitchenController::class, 'updateStatus'])->name('kitchen.updateStatus');
 	Route::get('/send-test-event', [TestBroadcastController::class, 'sendTestEvent']);
 	Route::get('/kitchen-orders', [OrderController::class, 'getKitchenOrders']);
+Route::put('/kitchen-orders/{id}', [KitchenController::class, 'updateStatus'])->name('kitchen.updateStatus');
 });
 
 

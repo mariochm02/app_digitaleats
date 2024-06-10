@@ -24,6 +24,20 @@ export default function Kitchen({ orders }) {
         return () => clearInterval(intervalId); // Cleanup interval on component unmount
     }, []);
 
+    const handleUpdateStatus = (orderId, newStatus) => {
+        axios.put(`/kitchen-orders/${orderId}`, { status: newStatus })
+            .then(response => {
+                setKitchenOrders(prevOrders => 
+                    prevOrders.map(order =>
+                        order.id === orderId ? { ...order, status: newStatus } : order
+                    )
+                );
+            })
+            .catch(error => {
+                console.error('Error updating order status:', error);
+            });
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -39,6 +53,14 @@ export default function Kitchen({ orders }) {
                                 {kitchenOrders.map(order => (
                                     <li key={order.id}>
                                         Pedido #{order.order_id} - Artículo: {order.order_detail.item} - Estado: {order.status}
+                                        {order.status === 'pending' && (
+                                            <button 
+                                                onClick={() => handleUpdateStatus(order.id, 'completed')}
+                                                className="ml-4 px-4 py-2 bg-green-500 text-white rounded"
+                                            >
+                                                Marcar como completado
+                                            </button>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
