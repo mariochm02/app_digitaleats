@@ -28,7 +28,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'table_number' => 'required|integer',
+            'table_number' => 'required|integer|unique:orders,table_number',
             'number_of_people' => 'required|integer',
         ]);
 
