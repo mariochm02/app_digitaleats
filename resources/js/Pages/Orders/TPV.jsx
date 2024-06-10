@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import './tpv.css'; // Asegúrarse de que el archivo CSS esté importado
+import { Inertia } from '@inertiajs/inertia'; // Importar Inertia
+import './tpv.css'; // Asegúrate de que el archivo CSS esté importado
 
 export default function TPV({ order, categories, orderDetails }) {
     const { auth } = usePage().props;
@@ -11,11 +13,7 @@ export default function TPV({ order, categories, orderDetails }) {
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [kitchenOrders, setKitchenOrders] = useState([]);
-
-    const { data, setData, post, processing, errors } = useForm({
-        item_id: '',
-        quantity: 1,
-    });
+    const [localOrderDetails, setLocalOrderDetails] = useState(orderDetails);
 
     useEffect(() => {
         const pusherKey = '7cfe1320d155f302b914';
@@ -49,16 +47,17 @@ export default function TPV({ order, categories, orderDetails }) {
         }
     }, []);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Submitting item_id:", data.item_id);
-        post(route('orders.addItem', order.id), {
-            onSuccess: () => {
-                console.log('Item added successfully');
-            },
-            onError: (error) => {
-                console.log('Error adding item:', error);
-            }
+    const addItemToOrder = (itemId) => {
+        console.log("Adding item_id:", itemId);
+        axios.post(route('orders.addItem', order.id), {
+            item_id: itemId,
+            quantity: 1
+        }).then(response => {
+            console.log('Item added successfully:', response.data);
+            // Recargar la página usando Inertia para obtener los detalles del pedido actualizados
+            Inertia.reload();
+        }).catch(error => {
+            console.log('Error adding item:', error.response.data.errors);
         });
     };
 
@@ -81,59 +80,48 @@ export default function TPV({ order, categories, orderDetails }) {
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-white leading-tight">TPV - Pedido #{order.id}</h2>}
         >
-            <Head  title={`TPV - Pedido #${order.id}`} />
-            <div className="py-12  bg-transparent">
+            <Head title={`TPV - Pedido #${order.id}`} />
+            <div className="py-12 bg-transparent">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-transparent">
-                    <div className="bg-transparent neo overflow-hidden shadow-sm sm:rounded-lg ">
+                    <div className="bg-transparent neo overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 neo text-white grid">
-                            <h1 className='text-center text-white text-4xl	' >TPV</h1>
-                            <div className="mb-4 flex justify-center	">
-                                <div className='justify-center	'>
-                                <button onClick={() => setSelectedCategory('Bebidas')} className="btn-category mr-2">Bebidas</button>
+                            <h1 className='text-center text-white text-4xl'>TPV</h1>
+                            <div className="mb-4 flex justify-center">
+                                <div className='justify-center'>
+                                    <button onClick={() => setSelectedCategory('Bebidas')} className="btn-category mr-2">Bebidas</button>
                                 </div>
                                 <div>
-                                <button onClick={() => setSelectedCategory('Comidas')} className="btn-category mr-2">Comidas</button>
+                                    <button onClick={() => setSelectedCategory('Comidas')} className="btn-category mr-2">Comidas</button>
                                 </div>
                                 <div>
-                                <button onClick={() => setSelectedCategory('')} className="btn-category mr-2">Todos</button>
+                                    <button onClick={() => setSelectedCategory('')} className="btn-category mr-2">Todos</button>
                                 </div>
                             </div>
                             {selectedCategory && (
-                                <div className="mb-4 flex justify-center	">
+                                <div className="mb-4 flex justify-center">
                                     {filteredCategories.flatMap(category => category.subcategories).map(subcategory => (
-                                        <div>
-
-                                        <button
-                                            key={subcategory.id}
-                                            onClick={() => setSelectedSubcategory(subcategory.name)}
-                                            className="btn-subcategory mr-2"
-                                        >
-                                            {subcategory.name}
-                                        </button>
+                                        <div key={subcategory.id}>
+                                            <button
+                                                onClick={() => setSelectedSubcategory(subcategory.name)}
+                                                className="btn-subcategory mr-2"
+                                            >
+                                                {subcategory.name}
+                                            </button>
                                         </div>
                                     ))}
                                     <div>
-
-                                    <button onClick={() => setSelectedSubcategory('')} className="btn-subcategory mr-2">Todas</button>
+                                        <button onClick={() => setSelectedSubcategory('')} className="btn-subcategory mr-2">Todas</button>
                                     </div>
                                 </div>
                             )}
-                            <form className='grid grid-cols-2 justify-center mt-15' onSubmit={handleSubmit}>
-                                <div className="form-group flex justify-start">
-                                    <label className='p-5 '>Artículo</label>
-                                    <select className='text-black' value={data.item_id} onChange={(e) => setData('item_id', e.target.value)}>
-                                        <option value="">Seleccione un artículo</option>
-                                        {filteredItems.map(item => (
-                                            <option key={item.id} value={item.id}>{item.name} - ${item.price}</option>
-                                        ))}
-                                    </select>
-                                    {errors.item_id && <div className="error">{errors.item_id}</div>}
-                                </div>
-                            
-                                <div className='col-span-2 flex justify-center'>
-                                <button type="submit" className="btn-submit " disabled={processing}>Añadir</button>
-                                </div>
-                            </form>
+                            <div className='grid grid-cols-4 gap-4'>
+                                {filteredItems.map(item => (
+                                    <button key={item.id} onClick={() => addItemToOrder(item.id)} className="item-button">
+                                        <img src={item.image_url} alt={item.name} className="item-image" />
+                                        <span>{item.name} - ${item.price}</span>
+                                    </button>
+                                ))}
+                            </div>
                             <h2 className="mt-4">Detalles del Pedido</h2>
                             <table className="table-auto w-full mt-4 border border-color-white">
                                 <thead>
@@ -144,7 +132,7 @@ export default function TPV({ order, categories, orderDetails }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {orderDetails.map(detail => (
+                                    {localOrderDetails.map(detail => (
                                         <tr key={detail.id}>
                                             <td className="border px-4 py-2">{detail.item}</td>
                                             <td className="border px-4 py-2">{detail.quantity}</td>
@@ -154,7 +142,7 @@ export default function TPV({ order, categories, orderDetails }) {
                                 </tbody>
                             </table>
                             <div className="mt-4">
-                                <strong>Total: ${orderDetails.reduce((total, detail) => total + parseFloat(detail.price), 0).toFixed(2)}</strong>
+                                <strong>Total: ${localOrderDetails.reduce((total, detail) => total + parseFloat(detail.price), 0).toFixed(2)}</strong>
                             </div>
                             <h2 className="mt-4">Notificaciones de Cocina</h2>
                             <ul>
