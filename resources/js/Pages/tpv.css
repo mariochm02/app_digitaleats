@@ -1,4 +1,3 @@
-/* General Styles */
 .btn-category, .btn-subcategory, .btn-submit {
     padding: 15px 25px;
     font-size: 16px;
@@ -6,7 +5,7 @@
     text-align: center;
     outline: none;
     color: #fff;
-    background-color: rgb(107 33 168);
+    background-color: rgb(107 33 168);;
     border: none;
     border-radius: 15px;
     box-shadow: 0 3px #fbbf24;
@@ -25,13 +24,15 @@
     transform: translateY(4px);
 }
 
-.neo {
+
+
+.neo{
     background: rgba(22, 22, 22, 0.35);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 16px );
+    -webkit-backdrop-filter: blur( 16px );
     border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
 
 .modal {
@@ -69,43 +70,4 @@
     color: black;
     text-decoration: none;
     cursor: pointer;
-}
-
-/* Mobile-specific Styles */
-@media (max-width: 768px) {
-    .btn-category, .btn-subcategory, .btn-submit {
-        padding: 10px 15px;
-        font-size: 14px;
-    }
-
-    .grid {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .grid .btn-category, .grid .btn-subcategory, .grid .item-button {
-        width: 90%;
-        margin: 5px 0;
-    }
-
-    .item-button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .item-image {
-        width: 100%;
-        height: auto;
-    }
-
-    .table-auto {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .table-auto th, .table-auto td {
-        white-space: nowrap;
-    }
 }

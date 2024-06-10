@@ -5,22 +5,24 @@ import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import { Inertia } from '@inertiajs/inertia'; // Importar Inertia
+import QRCode from 'qrcode.react'; // Importar librería QRCode
 import './tpv.css'; // Asegúrate de que el archivo CSS esté importado
 
 export default function TPV({ order, categories, orderDetails }) {
     const { auth } = usePage().props;
 
+    const query = new URLSearchParams(window.location.search);
+    const key = query.get('key');
+
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [kitchenOrders, setKitchenOrders] = useState([]);
     const [localOrderDetails, setLocalOrderDetails] = useState(orderDetails);
+    const [showQR, setShowQR] = useState(false);
 
     useEffect(() => {
         const pusherKey = '7cfe1320d155f302b914';
         const pusherCluster = 'eu';
-
-        console.log('Pusher Key:', pusherKey);
-        console.log('Pusher Cluster:', pusherCluster);
 
         if (pusherKey && pusherCluster) {
             window.Pusher = Pusher;
@@ -35,7 +37,6 @@ export default function TPV({ order, categories, orderDetails }) {
 
             window.Echo.channel('orders')
                 .listen('OrderStatusUpdated', (data) => {
-                    console.log('Order Status Updated:', data);
                     setKitchenOrders(prevOrders => [...prevOrders, data.status]);
                 });
 
@@ -48,13 +49,10 @@ export default function TPV({ order, categories, orderDetails }) {
     }, []);
 
     const addItemToOrder = (itemId) => {
-        console.log("Adding item_id:", itemId);
         axios.post(route('orders.addItem', order.id), {
             item_id: itemId,
             quantity: 1
         }).then(response => {
-            console.log('Item added successfully:', response.data);
-            // Recargar la página usando Inertia para obtener los detalles del pedido actualizados
             Inertia.reload();
         }).catch(error => {
             console.log('Error adding item:', error.response.data.errors);
@@ -75,9 +73,17 @@ export default function TPV({ order, categories, orderDetails }) {
         subcategory.items
     );
 
+    if (!auth && !key) {
+        return (
+            <div>
+                <h1>No está autorizado para ver esta página.</h1>
+            </div>
+        );
+    }
+
     return (
         <AuthenticatedLayout
-            user={auth.user}
+            user={auth?.user}
             header={<h2 className="font-semibold text-xl text-white leading-tight">TPV - Pedido #{order.id}</h2>}
         >
             <Head title={`TPV - Pedido #${order.id}`} />
@@ -144,6 +150,24 @@ export default function TPV({ order, categories, orderDetails }) {
                             <div className="mt-4">
                                 <strong>Total: ${localOrderDetails.reduce((total, detail) => total + parseFloat(detail.price), 0).toFixed(2)}</strong>
                             </div>
+                            <button 
+                                className="btn btn-primary mt-4"
+                                onClick={() => setShowQR(true)}
+                            >
+                                Mesa Cliente
+                            </button>
+                            {showQR && (
+                                <div className="modal">
+                                    <div className="modal-content">
+                                        <span 
+                                            className="close" 
+                                            onClick={() => setShowQR(false)}
+                                        >&times;</span>
+                                        <h2>Código QR para la mesa</h2>
+                                        <QRCode value={`http://51.91.100.181:8000/orders/${order.id}/client-tpv?key=${order.secret_key}`} />
+                                    </div>
+                                </div>
+                            )}
                             <h2 className="mt-4">Notificaciones de Cocina</h2>
                             <ul>
                                 {kitchenOrders.map(order => (

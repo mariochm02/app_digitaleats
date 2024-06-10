@@ -60,8 +60,9 @@ Route::put('/kitchen-orders/{id}', [KitchenController::class, 'updateStatus'])->
 Route::put('/orders/{order}/reservation', [OrderController::class, 'updateReservation'])->name('orders.updateReservation');
 });
 
-
-
+Route::get('/orders/{order}/client-tpv', [OrderController::class, 'clientTpv'])->name('orders.clientTpv');
+	Route::post('/orders/{order}/add-item', [OrderController::class, 'addItem'])->name('orders.addItem');
+	Route::get('/orders/{order}/tpv', [OrderController::class, 'tpv'])->name('orders.tpv');
 
 
 require __DIR__.'/auth.php';
