@@ -109,3 +109,13 @@
         white-space: nowrap;
     }
 }
+.remove-item {
+    color: red;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.remove-item:hover {
+    color: darkred;
+}

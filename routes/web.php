@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
 	Route::get('/kitchen-orders', [OrderController::class, 'getKitchenOrders']);
 Route::put('/kitchen-orders/{id}', [KitchenController::class, 'updateStatus'])->name('kitchen.updateStatus');
 Route::put('/orders/{order}/reservation', [OrderController::class, 'updateReservation'])->name('orders.updateReservation');
+Route::post('/orders/{order}/remove-item/{orderDetail}', [OrderController::class, 'removeItem'])->name('orders.removeItem');
 });
 
 Route::get('/orders/{order}/client-tpv', [OrderController::class, 'clientTpv'])->name('orders.clientTpv');

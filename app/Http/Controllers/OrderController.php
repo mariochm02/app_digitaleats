@@ -169,4 +169,13 @@ class OrderController extends Controller
         return redirect()->route('login');
     }
 }
+public function removeItem(Request $request, Order $order, OrderDetail $orderDetail)
+{
+    try {
+        $orderDetail->delete();
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
 }

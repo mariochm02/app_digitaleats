@@ -59,6 +59,16 @@ export default function TPV({ order, categories, orderDetails }) {
         });
     };
 
+    const removeItemFromOrder = (orderDetailId) => {
+        axios.post(route('orders.removeItem', { order: order.id, orderDetail: orderDetailId }))
+            .then(response => {
+                Inertia.reload();
+            })
+            .catch(error => {
+                console.log('Error removing item:', error.response.data.errors);
+            });
+    };
+
     const filteredCategories = categories.filter(category => 
         !selectedCategory || category.name === selectedCategory
     );
@@ -135,6 +145,7 @@ export default function TPV({ order, categories, orderDetails }) {
                                         <th className="px-4 py-2">Artículo</th>
                                         <th className="px-4 py-2">Cantidad</th>
                                         <th className="px-4 py-2">Precio</th>
+                                        <th className="px-4 py-2">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -143,6 +154,14 @@ export default function TPV({ order, categories, orderDetails }) {
                                             <td className="border px-4 py-2">{detail.item}</td>
                                             <td className="border px-4 py-2">{detail.quantity}</td>
                                             <td className="border px-4 py-2">${detail.price}</td>
+                                            <td className="border px-4 py-2 text-center">
+                                                <span 
+                                                    className="remove-item"
+                                                    onClick={() => removeItemFromOrder(detail.id)}
+                                                >
+                                                    &#x2716;
+                                                </span>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

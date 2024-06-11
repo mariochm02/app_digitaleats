@@ -5,6 +5,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 import './footer.css';
+import '@fortawesome/fontawesome-free/css/all.css'; // Importar FontAwesome
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -35,7 +36,14 @@ export default function Authenticated({ user, header, children }) {
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
-                            
+                            <a
+                                href="http://51.91.100.181:8000/kitchen"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-kitchen text-white flex items-center ml-4"
+                            >
+                                <i className="fas fa-utensils mr-2"></i> IR A COCINA ->
+                            </a>
                             <div className="ms-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -128,14 +136,12 @@ export default function Authenticated({ user, header, children }) {
             </nav>
 
             {header && (
-                <header className="bg-neutral-900 shadow ">
-                    <div className="max-w-7xl mx-auto  py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                <header className="bg-neutral-900 shadow">
+                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
                 </header>
             )}
 
             <main>{children}</main>
-
-            
         </div>
     );
 }
