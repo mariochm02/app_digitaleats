@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\TestBroadcastController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -59,6 +60,8 @@ Route::middleware('auth')->group(function () {
 Route::put('/kitchen-orders/{id}', [KitchenController::class, 'updateStatus'])->name('kitchen.updateStatus');
 Route::put('/orders/{order}/reservation', [OrderController::class, 'updateReservation'])->name('orders.updateReservation');
 Route::post('/orders/{order}/remove-item/{orderDetail}', [OrderController::class, 'removeItem'])->name('orders.removeItem');
+Route::post('/orders/{order}/close-as-paid', [OrderController::class, 'closeAsPaid'])->name('orders.closeAsPaid');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::get('/orders/{order}/client-tpv', [OrderController::class, 'clientTpv'])->name('orders.clientTpv');

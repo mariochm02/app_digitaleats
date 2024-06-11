@@ -69,6 +69,16 @@ export default function TPV({ order, categories, orderDetails }) {
             });
     };
 
+    const closeOrderAsPaid = () => {
+        axios.post(route('orders.closeAsPaid', order.id))
+            .then(response => {
+                Inertia.get(route('orders.index'));
+            })
+            .catch(error => {
+                console.log('Error closing order:', error.response.data.errors);
+            });
+    };
+
     const filteredCategories = categories.filter(category => 
         !selectedCategory || category.name === selectedCategory
     );
@@ -154,13 +164,13 @@ export default function TPV({ order, categories, orderDetails }) {
                                             <td className="border px-4 py-2">{detail.item}</td>
                                             <td className="border px-4 py-2">{detail.quantity}</td>
                                             <td className="border px-4 py-2">${detail.price}</td>
-                                            <td className="border px-4 py-2 text-center">
-                                                <span 
-                                                    className="remove-item"
+                                            <td className="border px-4 py-2">
+                                                <button 
+                                                    className="remove-item" 
                                                     onClick={() => removeItemFromOrder(detail.id)}
                                                 >
-                                                    &#x2716;
-                                                </span>
+                                                    X
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -187,6 +197,12 @@ export default function TPV({ order, categories, orderDetails }) {
                                     </div>
                                 </div>
                             )}
+                            <button 
+                                className="btn-close-order"
+                                onClick={closeOrderAsPaid}
+                            >
+                                Cerrar Pedido Pagado
+                            </button>
                             <h2 className="mt-4">Notificaciones de Cocina</h2>
                             <ul>
                                 {kitchenOrders.map(order => (

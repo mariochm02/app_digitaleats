@@ -119,3 +119,29 @@
 .remove-item:hover {
     color: darkred;
 }
+.btn-close-order {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+    color: #fff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px #666;
+}
+
+.btn-close-order:hover {
+    background-color: #218838;
+    color: white;
+}
+
+.btn-close-order:active {
+    background-color: #1e7e34;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}

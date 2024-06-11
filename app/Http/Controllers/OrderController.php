@@ -17,8 +17,8 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('orderDetails.kitchenOrderStatus')->get();
-        return Inertia::render('Orders/Index', ['orders' => $orders]);
+    $orders = Order::where('status', '!=', 'paid')->with('orderDetails.kitchenOrderStatus')->get();
+    return Inertia::render('Orders/Index', ['orders' => $orders]);
     }
 
     public function create()
@@ -178,4 +178,15 @@ public function removeItem(Request $request, Order $order, OrderDetail $orderDet
         return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
 }
+public function closeAsPaid(Request $request, Order $order)
+{
+    try {
+        $order->status = 'paid';
+        $order->save();
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
+
 }
