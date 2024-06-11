@@ -9,7 +9,6 @@
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #f9f9f9;
 }
 
 .form-container h1 {
@@ -33,6 +32,7 @@
     margin-bottom: 5px;
     border: 1px solid #ccc;
     border-radius: 3px;
+	color: black;
 }
 
 .form-container button {
@@ -57,4 +57,18 @@
     color: red;
     font-size: 0.875em;
     margin-top: 5px;
+}
+
+#neo{
+    #neo{
+        background: rgba( 0, 0, 0, 0.35 );
+        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+        backdrop-filter: blur( 16px );
+        -webkit-backdrop-filter: blur( 16px );
+        border-radius: 10px;  
+    }
+    
+    #boton{
+    background-color: #a855f7;
+    }
 }

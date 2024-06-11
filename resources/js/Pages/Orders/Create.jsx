@@ -19,34 +19,34 @@ export default function Create() {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Crear Pedido</h2>}
+            header={<h2 className="font-semibold text-xl text-purple-500 leading-tight">Crear Pedido</h2>}
         >
             <Head title="Crear Pedido" />
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
+                    <div className="neo text-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div className="p-6  ">
                             <h1>Crear Pedido</h1>
-                            <form onSubmit={submit}>
+                            <form className='' onSubmit={submit}>
                                 <div className="form-group">
-                                    <label>Número de Mesa</label>
-                                    <input
+                                    <label className='p-7 '>Número de Mesa</label>
+                                    <input className='m-6'
                                         type="number"
                                         value={data.table_number}
                                         onChange={(e) => setData('table_number', e.target.value)}
                                     />
                                     {errors.table_number && <div className="error">{errors.table_number}</div>}
                                 </div>
-                                <div className="form-group">
-                                    <label>Número de Personas</label>
-                                    <input
+                                <div className="form-group ">
+                                    <label className='p-7'>Número de Personas</label>
+                                    <input className='m-343434'
                                         type="number"
                                         value={data.number_of_people}
                                         onChange={(e) => setData('number_of_people', e.target.value)}
                                     />
                                     {errors.number_of_people && <div className="error">{errors.number_of_people}</div>}
                                 </div>
-                                <button type="submit" disabled={processing}>Crear</button>
+                                <button className='mt-3' type="submit" disabled={processing}>Crear</button>
                             </form>
                         </div>
                     </div>

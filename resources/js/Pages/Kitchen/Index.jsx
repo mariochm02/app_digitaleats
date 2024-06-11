@@ -41,7 +41,7 @@ export default function Kitchen({ orders }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Cocina</h2>}
+            header={<h2 className="font-semibold text-xl text-purple-500 leading-tight">Cocina</h2>}
         >
             <Head title="Cocina" />
             <div className="py-12">

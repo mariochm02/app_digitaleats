@@ -37,7 +37,7 @@ export default function Index({ users, flash }) {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Empleados</h2>}
+            header={<h2 className="font-semibold text-xl text-purple-500 leading-tight">Empleados</h2>}
         >
             <Head title="Empleados" />
             <div className="py-12">
