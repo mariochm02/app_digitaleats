@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
+import axios from 'axios';
 import Pusher from 'pusher-js';
 import Echo from 'laravel-echo';
 import './index.css';
 
-
-export default function Index({ orders, flash }) {
+export default function Index({ orders: initialOrders, flash }) {
     const { auth } = usePage().props;
+    const [orders, setOrders] = useState(initialOrders);
 
     useEffect(() => {
-        // Claves de Pusher directamente en el código (sólo para pruebas/desarrollo)
         const pusherKey = '7cfe1320d155f302b914';
         const pusherCluster = 'eu';
 
@@ -31,7 +31,6 @@ export default function Index({ orders, flash }) {
             window.Echo.channel('orders')
                 .listen('OrderStatusChanged', (data) => {
                     console.log('Order Status Changed:', data);
-                    // Aquí puedes manejar la actualización de los pedidos
                     alert(`Order ${data.order.id} status changed to ${data.status}`);
                 });
         }
@@ -60,17 +59,40 @@ export default function Index({ orders, flash }) {
         }
     };
 
+    const handleReservationChange = async (orderId, isReserved) => {
+        try {
+            const response = await axios.put(route('orders.updateReservation', orderId), {
+                is_reserved: isReserved
+            }, {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+
+            if (response.data.success) {
+                console.log(`Order ${orderId} reservation status updated to ${isReserved}`);
+                setOrders(prevOrders => prevOrders.map(order =>
+                    order.id === orderId ? { ...order, is_reserved: isReserved } : order
+                ));
+            } else {
+                console.error(`Failed to update reservation status for order ${orderId}`);
+            }
+        } catch (error) {
+            console.error('Error updating reservation status:', error);
+        }
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={<h2 className="font-semibold text-xl text-white leading-tight">Pedidos</h2>}
         >
             <Head title="Pedidos" />
-            <div className="py-12  " >
-                <div className="bg-transparent max-w-7xl  mx-auto sm:px-6 lg:px-8">
+            <div className="py-12">
+                <div className="bg-transparent max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="neo overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <h1 className='text-white'>Pedidos</h1>
+                            <h1 className="text-white">Pedidos</h1>
                             {flash && flash.success && (
                                 <div>{flash.success}</div>
                             )}
@@ -88,10 +110,19 @@ export default function Index({ orders, flash }) {
                                         <tr key={order.id}>
                                             <td className="border px-4 py-2">{order.table_number}</td>
                                             <td className="border px-4 py-2">{order.number_of_people}</td>
-                                            <td className="border px-4 py-2">
+                                            <td className="border px-4 py-2 flex items-center">
                                                 <Link href={route("orders.edit", order.id)} className="text-blue-500 mr-2">Editar</Link>
-                                                <button onClick={handleDelete} data-id={order.id} className="text-red-500">Eliminar</button>
-                                                <Link href={route("orders.tpv", order.id)} className="text-green-500 ml-2">TPV</Link>
+                                                <button onClick={handleDelete} data-id={order.id} className="text-red-500 mr-2">Eliminar</button>
+                                                <Link href={route("orders.tpv", order.id)} className="text-green-500 mr-2">TPV</Link>
+                                                <label className="flex items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={order.is_reserved}
+                                                        onChange={(e) => handleReservationChange(order.id, e.target.checked)}
+                                                        className="mr-2"
+                                                    />
+                                                    Reserva
+                                                </label>
                                             </td>
                                         </tr>
                                     ))}

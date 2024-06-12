@@ -11,13 +11,14 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use App\Models\KitchenOrderStatus;
 use App\Events\OrderStatusUpdated;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('orderDetails.kitchenOrderStatus')->get();
-        return Inertia::render('Orders/Index', ['orders' => $orders]);
+    $orders = Order::where('status', '!=', 'paid')->with('orderDetails.kitchenOrderStatus')->get();
+    return Inertia::render('Orders/Index', ['orders' => $orders]);
     }
 
     public function create()
@@ -31,6 +32,8 @@ class OrderController extends Controller
             'table_number' => 'required|integer|unique:orders,table_number',
             'number_of_people' => 'required|integer',
         ]);
+
+        $validatedData['secret_key'] = Str::random(10);
 
         Order::create($validatedData);
 
@@ -65,15 +68,19 @@ class OrderController extends Controller
         }
     }
 
-    public function tpv(Order $order)
+    public function tpv(Request $request, Order $order)
     {
-        $categories = Category::with('subcategories.items')->get();
-        $orderDetails = $order->orderDetails;
-        return Inertia::render('Orders/TPV', [
-            'order' => $order,
-            'categories' => $categories,
-            'orderDetails' => $orderDetails,
-        ]);
+        if ($request->has('key') && $request->key === $order->secret_key || $request->user()) {
+            $categories = Category::with('subcategories.items')->get();
+            $orderDetails = $order->orderDetails;
+            return Inertia::render('Orders/TPV', [
+                'order' => $order,
+                'categories' => $categories,
+                'orderDetails' => $orderDetails,
+            ]);
+        } else {
+            return redirect()->route('login');
+        }
     }
 
     public function addItem(Request $request, Order $order)
@@ -137,4 +144,49 @@ class OrderController extends Controller
         $orders = KitchenOrderStatus::with('orderDetail')->where('status', 'pending')->get();
         return response()->json($orders);
     }
+
+    public function updateReservation(Request $request, Order $order)
+    {
+        $validatedData = $request->validate([
+            'is_reserved' => 'required|boolean',
+        ]);
+
+        $order->update($validatedData);
+
+        return response()->json(['success' => true, 'order' => $order]);
+    }
+	public function clientTpv(Request $request, Order $order)
+{
+    if ($request->has('key') && $request->key === $order->secret_key) {
+        $categories = Category::with('subcategories.items')->get();
+        $orderDetails = $order->orderDetails;
+        return Inertia::render('ClientTPV', [
+            'order' => $order,
+            'categories' => $categories,
+            'orderDetails' => $orderDetails,
+        ]);
+    } else {
+        return redirect()->route('login');
+    }
+}
+public function removeItem(Request $request, Order $order, OrderDetail $orderDetail)
+{
+    try {
+        $orderDetail->delete();
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
+public function closeAsPaid(Request $request, Order $order)
+{
+    try {
+        $order->status = 'paid';
+        $order->save();
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
+
 }
