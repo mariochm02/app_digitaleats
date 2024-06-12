@@ -7,9 +7,9 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
-    const { auth, ordersPaidToday, ordersPaidThisMonth, ordersPaidThisYear } = usePage().props;
+    const { auth, ordersPaidToday, ordersPaidThisMonth, ordersPaidThisYear, revenueToday, revenueThisMonth, revenueThisYear } = usePage().props;
 
-    const data = {
+    const ordersData = {
         labels: ['Hoy', 'Este Mes', 'Este Año'],
         datasets: [
             {
@@ -17,6 +17,19 @@ export default function Dashboard() {
                 data: [ordersPaidToday, ordersPaidThisMonth, ordersPaidThisYear],
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const revenueData = {
+        labels: ['Hoy', 'Este Mes', 'Este Año'],
+        datasets: [
+            {
+                label: 'Ingresos ($)',
+                data: [revenueToday, revenueThisMonth, revenueThisYear],
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
                 borderWidth: 1,
             },
         ],
@@ -35,6 +48,19 @@ export default function Dashboard() {
         },
     };
 
+    const revenueOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Ingresos Totales ($)',
+            },
+        },
+    };
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -47,8 +73,12 @@ export default function Dashboard() {
                     <div className="neo text-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-white">
                             <h3 className="text-2xl mb-4">Estadísticas de Pedidos</h3>
+                            <div className="chart-container mb-8" style={{ position: 'relative', height: '40vh', width: '80vw' }}>
+                                <Bar data={ordersData} options={options} />
+                            </div>
+                            <h3 className="text-2xl mb-4">Estadísticas de Ingresos</h3>
                             <div className="chart-container" style={{ position: 'relative', height: '40vh', width: '80vw' }}>
-                                <Bar data={data} options={options} />
+                                <Bar data={revenueData} options={revenueOptions} />
                             </div>
                         </div>
                     </div>
