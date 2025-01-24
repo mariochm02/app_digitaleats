@@ -1,0 +1,25 @@
+.btn-kitchen {
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+    color: #fff;
+    background-color: rgb(107, 33, 168);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 3px #fbbf24;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.btn-kitchen:hover {
+    background-color: #fbbf24;
+    color: black;
+}
+
+.btn-kitchen:active {
+    background-color: #fbbf24;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}

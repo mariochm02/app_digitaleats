@@ -1,0 +1,79 @@
+/* resources/js/Pages/Users/create.css */
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 300px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.form-container h1 {
+    margin-bottom: 20px;
+}
+
+.form-container div {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+	color: black !important;
+}
+
+.m-6 {
+	color: black !important;
+}
+
+.m-343434{
+	color: black !important;
+}
+
+
+.form-container button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 3px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.form-container button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+.form-container button:hover:enabled {
+    background-color: #0056b3;
+}
+
+.form-container .error {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 5px;
+}
+
+.neo{
+    background: rgba( 0, 0, 0, 0.35 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 16px );
+    -webkit-backdrop-filter: blur( 16px );
+    border-radius: 10px;  
+}
+
