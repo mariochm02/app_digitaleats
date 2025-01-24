@@ -17,22 +17,26 @@
 
 .table-auto th,
 .table-auto td {
-    border: 1px solid #ccc;
+    border: 1px solid #333; /* Cambiado a un color más oscuro */
     padding: 10px;
     text-align: left;
+    color: #fff; /* Texto en blanco */
 }
 
 .table-auto th {
-    background-color: #f9f9f9;
+    background-color: #444; /* Cambiado a un color oscuro */
+    color: #fff; /* Texto en blanco */
     font-weight: bold;
 }
 
 .table-auto tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #333; /* Fondo oscuro alternativo */
+    color: #fff; /* Texto en blanco */
 }
 
 .table-auto tr:hover {
-    background-color: #e6e6e6;
+    background-color: #555; /* Color oscuro para hover */
+    color: #fff; /* Texto en blanco */
 }
 
 /* Botones */
@@ -46,37 +50,38 @@
     cursor: pointer;
     text-align: center;
     text-decoration: none;
+    color: #fff; /* Texto en blanco */
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background-color: #1a73e8; /* Azul oscuro */
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #1558b3; /* Azul más oscuro */
 }
 
 .btn-secondary {
-    background-color: #6c757d;
+    background-color: #444; /* Gris oscuro */
     color: white;
 }
 
 .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: #333; /* Gris más oscuro */
 }
 
 .btn-danger {
-    background-color: #dc3545;
+    background-color: #b22a2a; /* Rojo oscuro */
     color: white;
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+    background-color: #8b2020; /* Rojo aún más oscuro */
 }
 
 .btn:disabled {
-    background-color: #aaa;
+    background-color: #555; /* Color oscuro deshabilitado */
     cursor: not-allowed;
 }
 
@@ -88,54 +93,69 @@
     width: 300px;
     margin: auto;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #333; /* Cambiado a color oscuro */
     border-radius: 5px;
-    background-color: #f9f9f9;
+    background-color: #222; /* Fondo oscuro */
 }
 
 .form-container h1 {
     margin-bottom: 20px;
+    color: #fff; /* Texto en blanco */
 }
 
 .form-container div {
     margin-bottom: 15px;
     width: 100%;
+    color: #fff; /* Texto en blanco */
 }
 
 .form-container label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: #fff; /* Texto en blanco */
 }
 
 .form-container input,
 .form-container select {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #444; /* Bordes oscuros */
     border-radius: 3px;
+    background-color: #333; /* Fondo oscuro */
+    color: #fff; /* Texto en blanco */
 }
 
 .form-container button {
     padding: 10px 15px;
     border: none;
     border-radius: 3px;
-    background-color: #007bff;
+    background-color: #1a73e8; /* Azul oscuro */
     color: white;
     cursor: pointer;
 }
 
 .form-container button:hover:enabled {
-    background-color: #0056b3;
+    background-color: #1558b3; /* Azul más oscuro */
 }
 
 .form-container button:disabled {
-    background-color: #aaa;
+    background-color: #555; /* Color oscuro deshabilitado */
     cursor: not-allowed;
 }
 
 .form-container .error {
-    color: red;
+    color: #ff6f61; /* Rojo suave para errores */
     font-size: 0.875em;
     margin-top: 5px;
+}
+
+/* Ajustes específicos para conflicto con clases */
+.bg-white {
+    background-color: #222 !important; /* Sobrescribe el blanco con oscuro */
+    color: #fff !important; /* Texto en blanco */
+}
+
+.border-gray-200 {
+    border-color: #333 !important; /* Bordes oscuros */
 }
