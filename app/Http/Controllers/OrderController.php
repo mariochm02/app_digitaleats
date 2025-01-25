@@ -13,6 +13,7 @@ use App\Models\KitchenOrderStatus;
 use App\Events\OrderStatusUpdated;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Session;
 
 
 class OrderController extends Controller
@@ -201,5 +202,89 @@ public function closeAsPaid(Request $request, Order $order)
         return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
 }
+
+ public function addToCart(Request $request) {
+        $cart = Session::get('cart', []);
+        $item = $request->input('item');
+        $item['quantity'] = 1; // Añadir cantidad por defecto
+        $cart[] = $item;
+        Session::put('cart', $cart);
+
+        return response()->json(['message' => 'Item added to cart', 'cart' => $cart]);
+    }
+
+    public function removeFromCart(Request $request) {
+        $cart = Session::get('cart', []);
+        $itemId = $request->input('item_id');
+        $cart = array_filter($cart, fn($item) => $item['id'] !== $itemId);
+        Session::put('cart', $cart);
+
+        return response()->json(['message' => 'Item removed from cart', 'cart' => $cart]);
+    }
+
+    public function addCartToOrder(Request $request, Order $order)
+{
+    $cart = $request->input('cart', []);
+
+    if (empty($cart)) {
+        return response()->json(['message' => 'El carrito está vacío'], 400);
+    }
+
+    foreach ($cart as $item) {
+        $request->merge([
+            'item_id' => $item['id'],
+            'quantity' => $item['quantity'] ?? 1,
+        ]);
+
+        $request->validate([
+            'item_id' => 'required|exists:items,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $itemModel = Item::find($request->item_id);
+        if ($itemModel) {
+            \Log::info('Adding item from cart:', [
+                'order_id' => $order->id,
+                'item_name' => $itemModel->name,
+                'quantity' => $request->quantity,
+                'price' => $itemModel->price * $request->quantity,
+            ]);
+
+            $orderDetail = OrderDetail::create([
+                'order_id' => $order->id,
+                'item' => $itemModel->name,
+                'quantity' => $request->quantity,
+                'price' => $itemModel->price * $request->quantity,
+            ]);
+
+            if ($itemModel->subcategory->category->name === 'Comidas') {
+                \Log::info('Creating kitchen order status from cart', [
+                    'order_id' => $order->id,
+                    'order_detail_id' => $orderDetail->id,
+                    'status' => 'pending',
+                ]);
+
+                $kitchenOrderStatus = KitchenOrderStatus::create([
+                    'order_id' => $order->id,
+                    'order_detail_id' => $orderDetail->id,
+                    'status' => 'pending',
+                ]);
+
+                \Log::info('Emitting OrderStatusUpdated event with data from cart:', [
+                    'order_id' => $kitchenOrderStatus->order_id,
+                    'order_detail_id' => $kitchenOrderStatus->order_detail_id,
+                    'status' => $kitchenOrderStatus->status,
+                ]);
+                event(new OrderStatusUpdated($kitchenOrderStatus));
+            }
+        }
+    }
+
+    Session::forget('cart'); // Limpia el carrito después de añadir los ítems
+    return response()->json(['message' => 'Carrito añadido al pedido correctamente']);
+}
+
+
+
 
 }

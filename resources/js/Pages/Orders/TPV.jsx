@@ -4,20 +4,18 @@ import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { Inertia } from '@inertiajs/inertia'; // Importar Inertia
-import QRCode from 'qrcode.react'; // Importar librería QRCode
-import './tpv.css'; // Asegúrate de que el archivo CSS esté importado
+import { Inertia } from '@inertiajs/inertia';
+import QRCode from 'qrcode.react';
+import './tpv.css';
 
 export default function TPV({ order, categories, orderDetails }) {
     const { auth } = usePage().props;
-
-    const query = new URLSearchParams(window.location.search);
-    const key = query.get('key');
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const [selectedSubcategory, setSelectedSubcategory] = useState('');
     const [kitchenOrders, setKitchenOrders] = useState([]);
     const [localOrderDetails, setLocalOrderDetails] = useState(orderDetails);
+    const [cart, setCart] = useState([]); // Estado del carrito
     const [showQR, setShowQR] = useState(false);
 
     useEffect(() => {
@@ -40,13 +38,33 @@ export default function TPV({ order, categories, orderDetails }) {
                     setKitchenOrders(prevOrders => [...prevOrders, data.status]);
                 });
 
-            // Emitir evento de prueba al cargar la página TPV
             fetch('/send-test-event')
                 .then(response => response.json())
                 .then(data => console.log('Test event response:', data))
                 .catch(error => console.error('Error triggering test event:', error));
         }
     }, []);
+
+    const addToCart = (item) => {
+        setCart([...cart, { ...item, quantity: 1 }]);
+    };
+
+    const removeFromCart = (itemId) => {
+        setCart(cart.filter(item => item.id !== itemId));
+    };
+
+   const addCartToOrder = () => {
+    console.log("Carrito enviado:", cart); // Depuración
+    axios.post(route('cart.addToOrder', order.id), { cart })
+        .then(response => {
+            console.log("Respuesta del servidor:", response.data);
+            setCart([]); // Limpia el carrito
+            Inertia.reload(); // Recargar el pedido
+        })
+        .catch(error => {
+            console.log("Error al añadir el carrito al pedido:", error.response?.data || error.message);
+        });
+};
 
     const addItemToOrder = (itemId) => {
         axios.post(route('orders.addItem', order.id), {
@@ -93,7 +111,7 @@ export default function TPV({ order, categories, orderDetails }) {
         subcategory.items
     );
 
-    if (!auth && !key) {
+    if (!auth) {
         return (
             <div>
                 <h1>No está autorizado para ver esta página.</h1>
@@ -113,41 +131,68 @@ export default function TPV({ order, categories, orderDetails }) {
                         <div className="p-6 neo text-white grid">
                             <h1 className='text-center text-white text-4xl'>TPV</h1>
                             <div className="mb-4 flex justify-center">
-                                <div className='justify-center'>
+                                <div>
                                     <button onClick={() => setSelectedCategory('Bebidas')} className="btn-category mr-2">Bebidas</button>
-                                </div>
-                                <div>
                                     <button onClick={() => setSelectedCategory('Comidas')} className="btn-category mr-2">Comidas</button>
-                                </div>
-                                <div>
                                     <button onClick={() => setSelectedCategory('')} className="btn-category mr-2">Todos</button>
                                 </div>
                             </div>
                             {selectedCategory && (
                                 <div className="mb-4 flex justify-center">
                                     {filteredCategories.flatMap(category => category.subcategories).map(subcategory => (
-                                        <div key={subcategory.id}>
-                                            <button
-                                                onClick={() => setSelectedSubcategory(subcategory.name)}
-                                                className="btn-subcategory mr-2"
-                                            >
-                                                {subcategory.name}
-                                            </button>
-                                        </div>
+                                        <button
+                                            key={subcategory.id}
+                                            onClick={() => setSelectedSubcategory(subcategory.name)}
+                                            className="btn-subcategory mr-2"
+                                        >
+                                            {subcategory.name}
+                                        </button>
                                     ))}
-                                    <div>
-                                        <button onClick={() => setSelectedSubcategory('')} className="btn-subcategory mr-2">Todas</button>
-                                    </div>
+                                    <button onClick={() => setSelectedSubcategory('')} className="btn-subcategory mr-2">Todas</button>
                                 </div>
                             )}
                             <div className='grid grid-cols-4 gap-4'>
                                 {filteredItems.map(item => (
-                                    <button key={item.id} onClick={() => addItemToOrder(item.id)} className="item-button">
+                                    <button key={item.id} onClick={() => addToCart(item)} className="item-button">
                                         <img src={item.image_url} alt={item.name} className="item-image" />
                                         <span>{item.name} - ${item.price}</span>
                                     </button>
                                 ))}
                             </div>
+                            <h2 className="mt-4">Carrito</h2>
+                            <table className="table-auto w-full mt-4 border border-color-white">
+                                <thead>
+                                    <tr>
+                                        <th className="px-4 py-2">Artículo</th>
+                                        <th className="px-4 py-2">Cantidad</th>
+                                        <th className="px-4 py-2">Precio</th>
+                                        <th className="px-4 py-2">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {cart.map(item => (
+                                        <tr key={item.id}>
+                                            <td className="border px-4 py-2">{item.name}</td>
+                                            <td className="border px-4 py-2">{item.quantity}</td>
+                                            <td className="border px-4 py-2">${item.price}</td>
+                                            <td className="border px-4 py-2">
+                                                <button 
+                                                    className="remove-item" 
+                                                    onClick={() => removeFromCart(item.id)}
+                                                >
+                                                    Quitar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <button 
+                                className="btn btn-primary mt-4"
+                                onClick={addCartToOrder}
+                            >
+                                Añadir al Pedido
+                            </button>
                             <h2 className="mt-4">Detalles del Pedido</h2>
                             <table className="table-auto w-full mt-4 border border-color-white">
                                 <thead>
@@ -179,24 +224,6 @@ export default function TPV({ order, categories, orderDetails }) {
                             <div className="mt-4">
                                 <strong>Total: ${localOrderDetails.reduce((total, detail) => total + parseFloat(detail.price), 0).toFixed(2)}</strong>
                             </div>
-                            <button 
-                                className="btn btn-primary mt-4"
-                                onClick={() => setShowQR(true)}
-                            >
-                                Mesa Cliente
-                            </button>
-                            {showQR && (
-                                <div className="modal">
-                                    <div className="modal-content">
-                                        <span 
-                                            className="close" 
-                                            onClick={() => setShowQR(false)}
-                                        >&times;</span>
-                                        <h2>Código QR para la mesa</h2>
-                                        <QRCode value={`http://digitaleats.ddns.net:8080/orders/${order.id}/client-tpv?key=${order.secret_key}`} />
-                                    </div>
-                                </div>
-                            )}
                             <button 
                                 className="btn-close-order"
                                 onClick={closeOrderAsPaid}

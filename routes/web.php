@@ -56,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/delete-order/{id}', [OrderController::class, 'deleteOrder'])->name('orders.destroy');
 	Route::get('/orders/{order}/tpv', [OrderController::class, 'tpv'])->name('orders.tpv');
 	Route::post('/orders/{order}/add-item', [OrderController::class, 'addItem'])->name('orders.addItem');
+	Route::post('/cart/add', [OrderController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove', [OrderController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/addToOrder/{order}', [OrderController::class, 'addCartToOrder'])->name('cart.addToOrder');
 	Route::get('/kitchen', [KitchenController::class, 'index'])->name('kitchen.index');
 	Route::get('/get-table-number/{orderId}', function ($orderId) {
     $order = Order::find($orderId);
