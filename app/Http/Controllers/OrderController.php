@@ -14,6 +14,8 @@ use App\Events\OrderStatusUpdated;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Session;
+use Barryvdh\DomPDF\PDF;
+use Illuminate\Support\Facades\Storage;
 
 
 class OrderController extends Controller
@@ -197,11 +199,46 @@ public function closeAsPaid(Request $request, Order $order)
     try {
         $order->status = 'paid';
         $order->save();
-        return response()->json(['success' => true]);
+
+        // Cargar detalles del pedido
+        $order = Order::with('orderDetails')->findOrFail($order->id);
+
+        $domPdf = app(PDF::class);
+
+        // Generar contenido HTML para el PDF
+        $html = '<h1>Factura Pedido #' . $order->id . '</h1>';
+        $html .= '<p><strong>Fecha:</strong> ' . $order->created_at . '</p>';
+        $html .= '<h2>Detalles del Pedido</h2>';
+        $html .= '<table border="1" style="width:100%; border-collapse: collapse;">';
+        $html .= '<thead><tr><th>Artículo</th><th>Cantidad</th><th>Total</th></tr></thead>';
+        $html .= '<tbody>';
+        foreach ($order->orderDetails as $detail) {
+            $html .= '<tr>';
+            $html .= '<td>' . $detail->item . '</td>';
+            $html .= '<td>' . $detail->quantity . '</td>';
+            $html .= '<td>$' . number_format($detail->price, 2) . '</td>';
+            $html .= '</tr>';
+        }
+        $html .= '</tbody>';
+        $html .= '</table>';
+
+        // Generar PDF
+        $pdf = $domPdf->loadHTML($html);
+
+        // Guardar el archivo en public/invoices
+        $filePath = public_path("invoices/order_{$order->id}.pdf");
+        $pdf->save($filePath);
+
+        // Retornar la URL del PDF
+        return response()->json([
+            'success' => true,
+            'invoice_url' => url("invoices/order_{$order->id}.pdf"),
+        ]);
     } catch (\Exception $e) {
         return response()->json(['success' => false, 'error' => $e->getMessage()]);
     }
 }
+
 
  public function addToCart(Request $request) {
         $cart = Session::get('cart', []);

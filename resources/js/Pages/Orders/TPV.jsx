@@ -87,15 +87,23 @@ export default function TPV({ order, categories, orderDetails }) {
             });
     };
 
-    const closeOrderAsPaid = () => {
-        axios.post(route('orders.closeAsPaid', order.id))
-            .then(response => {
-                Inertia.get(route('orders.index'));
-            })
-            .catch(error => {
-                console.log('Error closing order:', error.response.data.errors);
-            });
-    };
+const closeOrderAsPaid = () => {
+    axios.post(route('orders.closeAsPaid', order.id))
+        .then(response => {
+            if (response.data.success) {
+                const invoiceUrl = response.data.invoice_url;
+                window.open(invoiceUrl, '_blank'); // Abrir el PDF en un pop-up
+                Inertia.get(route('orders.index')); // Redirigir a la lista de pedidos
+            } else {
+                alert('Error al cerrar el pedido: ' + response.data.error);
+            }
+        })
+        .catch(error => {
+            console.log('Error closing order:', error.response?.data || error.message);
+            alert('Ocurrió un error al cerrar el pedido.');
+        });
+};
+
 
     const filteredCategories = categories.filter(category => 
         !selectedCategory || category.name === selectedCategory
