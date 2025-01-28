@@ -172,7 +172,6 @@ const closeOrderAsPaid = () => {
                                 <thead>
                                     <tr>
                                         <th className="px-4 py-2">Artículo</th>
-                                        <th className="px-4 py-2">Cantidad</th>
                                         <th className="px-4 py-2">Precio</th>
                                         <th className="px-4 py-2">Acciones</th>
                                     </tr>
@@ -181,7 +180,6 @@ const closeOrderAsPaid = () => {
                                     {cart.map(item => (
                                         <tr key={item.id}>
                                             <td className="border px-4 py-2">{item.name}</td>
-                                            <td className="border px-4 py-2">{item.quantity}</td>
                                             <td className="border px-4 py-2">${item.price}</td>
                                             <td className="border px-4 py-2">
                                                 <button 
@@ -206,7 +204,6 @@ const closeOrderAsPaid = () => {
                                 <thead>
                                     <tr>
                                         <th className="px-4 py-2">Artículo</th>
-                                        <th className="px-4 py-2">Cantidad</th>
                                         <th className="px-4 py-2">Precio</th>
                                         <th className="px-4 py-2">Acciones</th>
                                     </tr>
@@ -215,7 +212,6 @@ const closeOrderAsPaid = () => {
                                     {localOrderDetails.map(detail => (
                                         <tr key={detail.id}>
                                             <td className="border px-4 py-2">{detail.item}</td>
-                                            <td className="border px-4 py-2">{detail.quantity}</td>
                                             <td className="border px-4 py-2">${detail.price}</td>
                                             <td className="border px-4 py-2">
                                                 <button 
@@ -232,13 +228,32 @@ const closeOrderAsPaid = () => {
                             <div className="mt-4">
                                 <strong>Total: ${localOrderDetails.reduce((total, detail) => total + parseFloat(detail.price), 0).toFixed(2)}</strong>
                             </div>
+							<br></br>
+							 <button 
+                                className="btn btn-primary mt-4"
+                                onClick={() => setShowQR(true)}
+                            >
+                                Mesa Cliente
+                            </button>
+                            {showQR && (
+                                <div className="modal">
+                                    <div className="modal-content">
+                                        <span 
+                                            className="close" 
+                                            onClick={() => setShowQR(false)}
+                                        >&times;</span>
+                                        <h2>Código QR para la mesa</h2>
+                                        <QRCode value={`http://digitaleats.ddns.net:8080/orders/${order.id}/client-tpv?key=${order.secret_key}`} />
+                                    </div>
+                                </div>
+                            )}
+							<br></br>
                             <button 
                                 className="btn-close-order"
                                 onClick={closeOrderAsPaid}
                             >
                                 Cerrar Pedido Pagado
                             </button>
-                            <h2 className="mt-4">Notificaciones de Cocina</h2>
                             <ul>
                                 {kitchenOrders.map(order => (
                                     <li key={order.id}>

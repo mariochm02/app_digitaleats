@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
+import './kitchen.css';
 
 export default function Kitchen({ orders }) {
     const { auth } = usePage().props;
@@ -79,12 +80,12 @@ export default function Kitchen({ orders }) {
                                         {order.status === 'pending' && (
                                             <button
                                                 onClick={() => handleUpdateStatus(order.id, 'completed')}
-                                                className="ml-4 px-4 py-2 bg-green-500 text-white rounded"
+                                                className="mb-4 ml-4 px-4 py-2 bg-green-500 text-white rounded"
                                             >
                                                 Marcar como completado
                                             </button>
                                         )}
-                                    </li>
+									</li>
                                 ))}
                             </ul>
                         </div>

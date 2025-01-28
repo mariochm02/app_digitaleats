@@ -7,7 +7,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
-    const { auth, ordersPaidToday, ordersPaidThisMonth, ordersPaidThisYear, revenueToday, revenueThisMonth, revenueThisYear } = usePage().props;
+    const { auth, ordersPaidToday, ordersPaidThisMonth, ordersPaidThisYear, revenueToday, revenueThisMonth, revenueThisYear, invoices } = usePage().props;
 
     const ordersData = {
         labels: ['Hoy', 'Este Mes', 'Este Año'],
@@ -80,6 +80,20 @@ export default function Dashboard() {
                             <div className="chart-container" style={{ position: 'relative', height: '40vh', width: '80vw' }}>
                                 <Bar data={revenueData} options={revenueOptions} />
                             </div>
+<h3 className="text-2xl mb-4">Facturas</h3>
+{invoices.length > 0 ? (
+    <ul>
+        {invoices.map((invoice, index) => (
+            <li key={index}>
+                <a href={invoice.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                    {invoice.name}
+                </a>
+            </li>
+        ))}
+    </ul>
+) : (
+    <p>No hay facturas disponibles.</p>
+)}
                         </div>
                     </div>
                 </div>

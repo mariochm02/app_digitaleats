@@ -122,7 +122,6 @@ export default function ClientTPV({ order, categories, orderDetails }) {
                             <thead>
                                 <tr>
                                     <th className="px-4 py-2">Artículo</th>
-                                    <th className="px-4 py-2">Cantidad</th>
                                     <th className="px-4 py-2">Precio</th>
                                 </tr>
                             </thead>
@@ -130,7 +129,6 @@ export default function ClientTPV({ order, categories, orderDetails }) {
                                 {localOrderDetails.map(detail => (
                                     <tr key={detail.id}>
                                         <td className="border px-4 py-2">{detail.item}</td>
-                                        <td className="border px-4 py-2">{detail.quantity}</td>
                                         <td className="border px-4 py-2">${detail.price}</td>
                                     </tr>
                                 ))}

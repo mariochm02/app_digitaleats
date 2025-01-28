@@ -12,6 +12,7 @@ use App\Http\Controllers\TestBroadcastController;
 use App\Http\Controllers\DashboardController;
 use App\Models\Order;
 use App\Http\Controllers\ItemController;
+use Illuminate\Support\Facades\File;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -82,6 +83,19 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
     Route::get('/carta/{item}/edit', [ItemController::class, 'edit'])->name('items.edit');
     Route::put('/carta/{item}', [ItemController::class, 'update'])->name('items.update');
     Route::delete('/carta/{item}', [ItemController::class, 'destroy'])->name('items.destroy');
+	Route::get('/invoices', function () {
+    $files = File::files(public_path('invoices')); // Obtiene todos los archivos del directorio `public/invoices`
+    $invoices = collect($files)->map(function ($file) {
+        return [
+            'name' => $file->getFilename(),
+            'url' => asset('invoices/' . $file->getFilename()), // Genera la URL para acceder al archivo
+        ];
+    });
+
+    return inertia('Dashboard', [
+        'invoices' => $invoices, // Envía las facturas a tu componente React
+    ]);
+});
 
 });
 

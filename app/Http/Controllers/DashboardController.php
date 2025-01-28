@@ -1,35 +1,33 @@
 <?php
 
-// app/Http/Controllers/DashboardController.php
 namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Carbon\Carbon;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-		
-		$user = Auth::user();
-		
-		   // Redirigir según el rol del usuario
+        $user = Auth::user();
+
+        // Redirigir según el rol del usuario
         switch ($user->role) {
             case 'camarero':
                 return redirect('/orders');
             case 'cocina':
                 return redirect('/kitchen');
         }
-		
-		    if (!Gate::allows('viewAny', User::class)) {
-        abort(403, 'Acceso no autorizado.');
-    }
+
+        if (!Gate::allows('viewAny', User::class)) {
+            abort(403, 'Acceso no autorizado.');
+        }
+
         // Obtener la fecha de hoy
         $today = Carbon::today();
         // Obtener el primer día del mes actual
@@ -55,6 +53,15 @@ class DashboardController extends Controller
             $query->where('status', 'paid')->whereBetween('updated_at', [$startOfYear, Carbon::now()]);
         })->sum('price');
 
+        // Obtener las facturas desde el directorio `public/invoices`
+        $files = File::files(public_path('invoices'));
+        $invoices = collect($files)->map(function ($file) {
+            return [
+                'name' => $file->getFilename(),
+                'url' => asset('invoices/' . $file->getFilename()), // Genera la URL completa del archivo
+            ];
+        });
+
         return Inertia::render('Dashboard', [
             'ordersPaidToday' => $ordersPaidToday,
             'ordersPaidThisMonth' => $ordersPaidThisMonth,
@@ -62,6 +69,7 @@ class DashboardController extends Controller
             'revenueToday' => $revenueToday,
             'revenueThisMonth' => $revenueThisMonth,
             'revenueThisYear' => $revenueThisYear,
+            'invoices' => $invoices, // Agrega las facturas aquí
         ]);
     }
 }
