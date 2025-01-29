@@ -4,8 +4,8 @@ import { Link } from '@inertiajs/react';
 export default function Guest({ children }) {
     return (
         <main className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-black"> 
-            <header className='w-30 h-30'>
-            <img className='w-80 h-80' src="https://live.staticflickr.com/65535/53778664629_1be5640ba5_m.jpg" alt="" />
+            <header className='border-4 border-amber-300 mb-8 w-30 h-30'>
+            <img className='w-80 h-80' src="http://digitaleats.ddns.net:8080/logo.jpeg" alt="" />
 
             </header>
 

@@ -26,7 +26,7 @@ export default function Dashboard() {
         labels: ['Hoy', 'Este Mes', 'Este Año'],
         datasets: [
             {
-                label: 'Ingresos ($)',
+                label: 'Ingresos (€)',
                 data: [revenueToday, revenueThisMonth, revenueThisYear],
                 backgroundColor: 'rgba(153, 102, 255, 0.2)',
                 borderColor: 'rgba(153, 102, 255, 1)',
@@ -36,30 +36,65 @@ export default function Dashboard() {
     };
 
     const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: 'Estadísticas de Pedidos Pagados',
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: 'white', // Color del texto de la leyenda
             },
         },
-    };
+        title: {
+            display: true,
+            text: 'Estadísticas de Pedidos Pagados',
+            color: 'white', // Color del título
+        },
+    },
+    scales: {
+        x: {
+            ticks: {
+                color: 'white', // Color de los textos en el eje X
+            },
+        },
+        y: {
+            ticks: {
+                color: 'white', // Color de los textos en el eje Y
+            },
+        },
+    },
+};
 
-    const revenueOptions = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: 'Ingresos Totales ($)',
+
+	
+	const revenueOptions = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top',
+            labels: {
+                color: 'white', // Color del texto de la leyenda
             },
         },
-    };
+        title: {
+            display: true,
+            text: 'Ingresos Totales (€)',
+            color: 'white', // Color del título
+        },
+    },
+    scales: {
+        x: {
+            ticks: {
+                color: 'white', // Color de los textos en el eje X
+            },
+        },
+        y: {
+            ticks: {
+                color: 'white', // Color de los textos en el eje Y
+            },
+        },
+    },
+};
+
 
     return (
         <AuthenticatedLayout

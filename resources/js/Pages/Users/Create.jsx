@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm, Link, usePage } from '@inertiajs/react';
 import './create.css';
@@ -10,10 +10,40 @@ export default function Create() {
         email: '',
         password: '',
         password_confirmation: '',
+        dni: '',
     });
+
+    const [dniError, setDniError] = useState("");
+
+    // Función para validar DNI antes de enviar
+    const validateDNI = (dni) => {
+        const dniRegex = /^\d{8}[A-Z]$/;
+        if (!dniRegex.test(dni)) {
+            return "El DNI debe tener 8 números seguidos de una letra mayúscula.";
+        }
+
+        // Validación de la letra del DNI español
+        const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+        const numero = parseInt(dni.substring(0, 8), 10);
+        const letra = dni.charAt(8);
+        if (letras[numero % 23] !== letra) {
+            return "La letra del DNI no es correcta.";
+        }
+
+        return "";
+    };
 
     const submit = (e) => {
         e.preventDefault();
+        
+        const dniValidationError = validateDNI(data.dni);
+        if (dniValidationError) {
+            setDniError(dniValidationError);
+            return;
+        } else {
+            setDniError("");
+        }
+
         post(route('users.store'));
     };
 
@@ -26,7 +56,7 @@ export default function Create() {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-transparent overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 transparent ">
+                        <div className="p-6 transparent">
                             <div id='neo' className="form-container text-white">
                                 <h1>Crear Usuario</h1>
                                 <form onSubmit={submit}>
@@ -47,6 +77,16 @@ export default function Create() {
                                             onChange={(e) => setData('email', e.target.value)}
                                         />
                                         {errors.email && <div className="error">{errors.email}</div>}
+                                    </div>
+                                    <div>
+                                        <label>DNI</label>
+                                        <input
+                                            type="text"
+                                            value={data.dni}
+                                            onChange={(e) => setData('dni', e.target.value.toUpperCase())}
+                                        />
+                                        {dniError && <div className="error">{dniError}</div>}
+                                        {errors.dni && <div className="error">{errors.dni}</div>}
                                     </div>
                                     <div>
                                         <label>Contraseña</label>

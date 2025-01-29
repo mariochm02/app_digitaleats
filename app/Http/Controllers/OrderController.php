@@ -321,6 +321,20 @@ public function closeAsPaid(Request $request, Order $order)
     return response()->json(['message' => 'Carrito añadido al pedido correctamente']);
 }
 
+public function deleteHiddenNotifications(Request $request)
+{
+    try {
+        $notificationIds = $request->input('notificationIds', []);
+
+        if (!empty($notificationIds)) {
+            KitchenOrderStatus::whereIn('id', $notificationIds)->delete();
+        }
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'error' => $e->getMessage()]);
+    }
+}
 
 
 

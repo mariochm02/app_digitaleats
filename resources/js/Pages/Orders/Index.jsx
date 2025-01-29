@@ -108,6 +108,30 @@ export default function Index({ orders: initialOrders, flash }) {
             console.error('Error updating reservation status:', error);
         }
     };
+	
+const handleDeleteHiddenNotifications = async () => {
+    if (confirm(`¿Está seguro de eliminar ${hiddenNotifications.length} notificación(es) ocultas?`)) {
+        try {
+            await axios.post('/delete-hidden-notifications', {
+                notificationIds: hiddenNotifications
+            });
+
+            // Eliminar del estado local y de localStorage
+            localStorage.removeItem('hiddenNotifications');
+            setKitchenNotifications(prevNotifications =>
+                prevNotifications.filter(notification => !hiddenNotifications.includes(notification.id))
+            );
+            setHiddenNotifications([]);
+
+            console.log("Notificaciones eliminadas del backend y frontend.");
+        } catch (error) {
+            console.error("Error al eliminar notificaciones ocultas:", error);
+        }
+    }
+};
+
+
+
 
     return (
         <AuthenticatedLayout
@@ -119,32 +143,40 @@ export default function Index({ orders: initialOrders, flash }) {
                 <div className="bg-transparent max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="neo overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6">
-                            <h1 className="text-white">Pedidos</h1>
                             {flash && flash.success && (
                                 <div>{flash.success}</div>
                             )}
-                            <Link href={route("orders.create")} className="text-purple-500">Crear Nuevo Pedido</Link>
+                            <Link href={route("orders.create")} className="editar text-blue-500 mr-2">Crear Nuevo Pedido</Link>
+{/* Notificaciones de Cocina */}
+<div className="mt-6 bg-gray-800 rounded-lg p-4 shadow-md">
+    <div className="flex justify-between items-center">
+        <h2 className="text-white text-lg mb-4 font-semibold">
+            Notificaciones de Cocina 
+            <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                {kitchenNotifications.length}
+            </span>
+        </h2>
 
-                            {/* Notificaciones de Cocina */}
-                            <div className="mt-6 bg-gray-800 rounded-lg p-4 shadow-md">
-                                <div className="flex justify-between items-center">
-                                    <h2 className="text-white text-lg mb-4 font-semibold">
-                                        Notificaciones de Cocina 
-                                        <span className="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                                            {kitchenNotifications.length}
-                                        </span>
-                                    </h2>
-                                    {hiddenNotifications.length > 0 && (
-                                        <button 
-                                            onClick={handleShowHidden}
-                                            className="text-blue-500 underline text-sm"
-                                        >
-                                            Mostrar Ocultas ({hiddenNotifications.length})
-                                        </button>
-                                    )}
-                                </div>
+        {/* Botones de acciones */}
+        {hiddenNotifications.length > 0 && (
+            <div className="flex space-x-2">
+                <button 
+                    onClick={handleShowHidden}
+                    className="text-blue-500 underline text-sm"
+                >
+                    Mostrar Ocultas ({hiddenNotifications.length})
+                </button>
+                <button 
+                    onClick={handleDeleteHiddenNotifications}
+                    className="bg-red-600 text-white text-sm px-3 py-1 rounded"
+                >
+                    Eliminar Ocultas
+                </button>
+            </div>
+        )}
+    </div>
                                 {kitchenNotifications.length > 0 ? (
-                                    <ul className="divide-y divide-gray-600">
+                                    <ul className="text-gray-200 divide-y divide-gray-600">
                                         {kitchenNotifications.map(notification => (
                                             <li key={notification.id} className="py-2 flex justify-between items-center">
                                                 <span>

@@ -163,7 +163,7 @@ const closeOrderAsPaid = () => {
                                 {filteredItems.map(item => (
                                     <button key={item.id} onClick={() => addToCart(item)} className="item-button">
                                         <img src={item.image_url} alt={item.name} className="item-image" />
-                                        <span>{item.name} - ${item.price}</span>
+                                        <span>{item.name}: {item.price}€</span>
                                     </button>
                                 ))}
                             </div>
@@ -180,7 +180,7 @@ const closeOrderAsPaid = () => {
                                     {cart.map(item => (
                                         <tr key={item.id}>
                                             <td className="border px-4 py-2">{item.name}</td>
-                                            <td className="border px-4 py-2">${item.price}</td>
+                                            <td className="border px-4 py-2">{item.price}€</td>
                                             <td className="border px-4 py-2">
                                                 <button 
                                                     className="remove-item" 
@@ -212,7 +212,7 @@ const closeOrderAsPaid = () => {
                                     {localOrderDetails.map(detail => (
                                         <tr key={detail.id}>
                                             <td className="border px-4 py-2">{detail.item}</td>
-                                            <td className="border px-4 py-2">${detail.price}</td>
+                                            <td className="border px-4 py-2">{detail.price}€</td>
                                             <td className="border px-4 py-2">
                                                 <button 
                                                     className="remove-item" 

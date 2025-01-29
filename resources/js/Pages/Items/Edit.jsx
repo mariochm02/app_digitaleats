@@ -3,14 +3,15 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function Edit({ auth, item, items }) {
-    const { data, setData, put, processing, errors } = useForm({
-        name: item.name || '',
-        price: item.price || '',
-        category_id: item.subcategory?.category?.id || '',
-        subcategory_id: item.subcategory_id || '',
-        new_category: '',
-        new_subcategory: '',
-    });
+const { data, setData, put, processing, errors } = useForm({
+    name: item.name || '',
+    price: item.price || '',
+    category_id: item.subcategory?.category?.id || '',
+    subcategory_id: item.subcategory_id || '',
+    new_category: '',
+    new_subcategory: '',
+    image_url: item.image_url || '', // Se añade aquí
+});
 
     const [filteredSubcategories, setFilteredSubcategories] = useState([]);
     const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
@@ -133,6 +134,29 @@ useEffect(() => {
                                     />
                                     {errors.price && <p className="text-red-500 text-xs italic">{errors.price}</p>}
                                 </div>
+								{/* Imagen (URL) */}
+<div className="mb-4">
+    <label className="block text-gray-700 text-sm font-bold mb-2">Imagen URL</label>
+    <input
+        type="text"
+        value={data.image_url || ''}
+        onChange={(e) => setData('image_url', e.target.value)}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+    />
+    {errors.image_url && <p className="text-red-500 text-xs italic">{errors.image_url}</p>}
+</div>
+
+{/* Vista previa de la imagen */}
+{data.image_url && (
+    <div className="mb-4">
+        <p className="text-gray-700 text-sm">Vista previa de la imagen:</p>
+        <img
+            src={data.image_url}
+            alt="Vista previa"
+            className="w-40 h-40 object-cover rounded shadow-md"
+        />
+    </div>
+)}
                                 {/* Categoría */}
                                 <div className="mb-4">
                                     <label className="block text-gray-700 text-sm font-bold mb-2">Categoría</label>

@@ -75,11 +75,10 @@ export default function Index({ users: initialUsers, flash, roles }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 text-white">
                     <div className="neo overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-transparent">
-                            <h1>Empleados</h1>
                             {flash && flash.success && <div>{flash.success}</div>}
                             <Link
                                 href={route("users.create")}
-                                className="text-purple-500"
+                                className="editar text-blue-500 mr-2"
                             >
                                 Crear Nuevo Empleado
                             </Link>

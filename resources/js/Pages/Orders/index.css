@@ -159,3 +159,67 @@
 .border-gray-200 {
     border-color: #333 !important; /* Bordes oscuros */
 }
+
+  .editar {
+    appearance: button;
+    background-color: #a855f7;
+    border: solid transparent;
+    border-radius: 19px;
+    border-width: 0 0 4px;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    
+    
+    
+    line-height: 25px;
+    margin: 0;
+    outline: none;
+    overflow: visible;
+    padding: 7px 19px;
+    text-align: center;
+   
+    touch-action: manipulation;
+    transform: translateZ(0);
+    transition: filter .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+   }
+   
+   .editar:after {
+    background-clip: padding-box;
+    background-color: #a855f7;
+    border: solid transparent;
+    border-radius: 16px;
+    border-width: 0 0 4px;
+    bottom: -4px;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+   }
+   
+   .editar:main, button:focus {
+    user-select: auto;
+   }
+   
+   .editar:hover:not(:disabled) {
+    filter: brightness(2.1);
+   }
+   
+   .editar:disabled {
+    cursor: auto;
+   }
+   
+   .editar:active:after {
+    border-width: 0 0 0px;
+   }
+   
+   .editar:active {
+    padding-bottom: 10px;
+   }

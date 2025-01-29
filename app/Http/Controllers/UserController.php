@@ -32,22 +32,29 @@ class UserController extends Controller
         return Inertia::render('Users/Create');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+        'dni' => [
+            'required',
+            'regex:/^\d{8}[A-Z]$/',
+            'unique:users,dni'
+        ], // Validación del DNI
+    ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'dni' => strtoupper($request->dni), // Guardamos en mayúsculas
+    ]);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
-    }
+    return redirect()->route('users.index')->with('success', 'Usuario creado exitosamente.');
+}
+
 
     public function edit(User $user)
     {

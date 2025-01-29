@@ -76,6 +76,7 @@ Route::put('/kitchen-orders/{id}', [KitchenController::class, 'updateStatus'])->
 Route::put('/orders/{order}/reservation', [OrderController::class, 'updateReservation'])->name('orders.updateReservation');
 Route::post('/orders/{order}/remove-item/{orderDetail}', [OrderController::class, 'removeItem'])->name('orders.removeItem');
 Route::post('/orders/{order}/close-as-paid', [OrderController::class, 'closeAsPaid'])->name('orders.closeAsPaid');
+Route::post('/delete-hidden-notifications', [OrderController::class, 'deleteHiddenNotifications']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/carta', [ItemController::class, 'index'])->name('items.index');
     Route::get('/carta/create', [ItemController::class, 'create'])->name('items.create');

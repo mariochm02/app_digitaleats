@@ -6,11 +6,15 @@ use App\Models\Item;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Subcategory;
+use Illuminate\Support\Facades\Gate;
 
 class ItemController extends Controller
 {
 public function index()
 {
+	    if (!Gate::allows('viewAny', User::class)) {
+        abort(403, 'Acceso no autorizado.');
+    }
     // Cargar relaciones con subcategoría y categoría
     $items = Item::with('subcategory.category')->get()->map(function ($item) {
         $item->price = (float) $item->price; // Convertir el precio a número
@@ -93,13 +97,14 @@ public function edit(Item $item)
 
   public function update(Request $request, Item $item)
 {
-    $request->validate([
+     $request->validate([
         'name' => 'required|string|max:255',
         'price' => 'required|numeric|min:0',
         'category_id' => 'nullable|exists:categories,id',
         'subcategory_id' => 'nullable|exists:subcategories,id',
         'new_category' => 'nullable|string|max:255',
         'new_subcategory' => 'nullable|string|max:255',
+        'image_url' => 'nullable|url|max:500', // Validación del campo URL
     ]);
 
     // Crear nueva categoría si se proporciona
@@ -118,10 +123,11 @@ public function edit(Item $item)
     }
 
     // Actualizar el ítem
-    $item->update([
+  $item->update([
         'name' => $request->name,
         'price' => $request->price,
-        'subcategory_id' => $subcategory ? $subcategory->id : $request->subcategory_id,
+        'subcategory_id' => $request->subcategory_id,
+        'image_url' => $request->image_url, // Se guarda en la DB
     ]);
 
     return redirect()->route('items.index')->with('success', 'Item actualizado correctamente.');
